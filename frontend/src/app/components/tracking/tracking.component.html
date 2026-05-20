@@ -1,0 +1,65 @@
+<app-user-header></app-user-header>
+
+<div class="tracking-page">
+  
+
+  <div class="tracking-card">
+
+    <div class="top-status">
+
+      <div class="pulse"></div>
+
+      <div>
+
+        <h1 *ngIf="currentStatus === 'SEARCHING'">
+          Searching nearest mechanic...
+        </h1>
+
+        <h1 *ngIf="currentStatus !== 'SEARCHING'">
+          Mechanic Assigned 🚗
+        </h1>
+
+        <p *ngIf="mechanicAssigned">
+          {{ mechanicName }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="timeline">
+
+      <div
+        class="step"
+        *ngFor="let step of timeline"
+        [class.active]="isDone(step)">
+
+        <div class="circle"></div>
+
+        <span>
+          {{
+            step === 'ON_THE_WAY' ? 'On The Way' :
+            step === 'IN_PROGRESS' ? 'Repair In Progress' :
+            step.replace('_', ' ')
+          }}
+        </span>
+
+      </div>
+
+    </div>
+    <button
+  class="cancel-btn"
+  *ngIf="currentStatus !== 'COMPLETED'"
+  (click)="cancelBooking()">
+
+  Cancel Request
+
+</button>
+
+    <div class="live-map" id="liveMap">
+      <!-- Leaflet map -->
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,15 @@
+<section id="services" class="services">
+  <div class="header">
+    <span class="section-tag">Popular Services</span>
+    <h2 class="section-title">We've Got You <span>Covered</span></h2>
+    <p class="section-desc">From a flat tyre at midnight to a dead battery at dawn — Resqora sends help fast, wherever you are.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card" *ngFor="let s of services">
+      <div class="service-icon" [class]="s.iconClass">{{ s.icon }}</div>
+      <h3>{{ s.title }}</h3>
+      <p>{{ s.desc }}</p>
+      <a href="#contact" class="service-link" [class]="s.linkClass">Know More →</a>
+    </div>
+  </div>
+</section>

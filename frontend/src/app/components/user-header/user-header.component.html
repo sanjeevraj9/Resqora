@@ -1,0 +1,35 @@
+<header class="topbar">
+
+  <div
+    class="logo"
+    (click)="goHome()">
+
+    RESQ<span>ORA</span>
+
+  </div>
+
+  <div class="nav-right">
+
+    <div
+      class="location-pill"
+      (click)="openCitySelector()">
+
+      📍 {{ selectedCity }}
+
+    </div>
+
+    <div class="support">
+      📞 24/7 Support
+    </div>
+
+    <div
+      class="account-btn"
+      (click)="openAccount()">
+
+      Account
+
+    </div>
+
+  </div>
+
+</header>

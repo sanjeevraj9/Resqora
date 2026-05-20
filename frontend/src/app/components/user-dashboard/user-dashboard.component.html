@@ -1,0 +1,77 @@
+<div class="dashboard-page">
+
+  <!-- HERO -->
+  <section class="hero-card">
+
+    <div class="hero-content">
+      <p class="welcome">Welcome back 👋</p>
+
+      <h1>{{ userName }}, need roadside help?</h1>
+
+      <p class="sub">
+        Fast roadside rescue, towing, flat tyre repair,
+        battery jumpstart & emergency assistance anytime.
+      </p>
+
+      <a routerLink="/create-request" class="emergency-btn">
+        🚨 Request Emergency Help
+      </a>
+    </div>
+
+    <div class="hero-visual">
+      🚗
+    </div>
+
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-grid">
+
+    <div
+      class="stat-card"
+      *ngFor="let stat of stats">
+
+      <div class="stat-icon">
+        {{ stat.icon }}
+      </div>
+
+      <h3>{{ stat.value }}</h3>
+
+      <p>{{ stat.label }}</p>
+
+    </div>
+
+  </section>
+
+  <!-- QUICK ACTIONS -->
+  <section class="quick-actions">
+
+    <h2>Quick Actions</h2>
+
+    <div class="actions-grid">
+
+      <a routerLink="/vehicles" class="action-card">
+        🚗
+        <span>My Vehicles</span>
+      </a>
+
+      <a routerLink="/request-history" class="action-card">
+        📜
+        <span>Request History</span>
+      </a>
+
+      <a routerLink="/tracking" class="action-card">
+        📍
+        <span>Track Mechanic</span>
+      </a>
+
+      <a routerLink="/profile" class="action-card">
+        👤
+        <span>Profile</span>
+      </a>
+
+    </div>
+
+  </section>
+
+</div>

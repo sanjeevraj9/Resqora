@@ -1,0 +1,84 @@
+<app-user-header></app-user-header>
+
+<div class="service-details-page">
+
+  <!-- HERO -->
+  <section class="service-hero">
+
+    <div class="service-left">
+
+      <div class="service-badge">
+        24/7 Emergency Service
+      </div>
+
+      <div class="service-icon">
+        {{ service.icon }}
+      </div>
+
+      <h1>
+        {{ service.title }}
+      </h1>
+
+      <p class="service-desc">
+        {{ service.desc }}
+      </p>
+
+      <div class="price-box">
+        Starting from
+        <span>{{ service.price }}</span>
+      </div>
+
+      <button
+        class="book-btn"
+        (click)="bookNow()">
+
+        Book Now →
+
+      </button>
+
+    </div>
+
+    <div class="service-right">
+
+      <div class="feature-card">
+
+        <h2>
+          Why Choose Resqora?
+        </h2>
+
+        <div
+          class="feature-item"
+          *ngFor="let feature of service.features">
+
+          <span>✅</span>
+          {{ feature }}
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <section class="trust-section">
+
+    <div class="trust-card">
+      🚗 24/7 Assistance
+    </div>
+
+    <div class="trust-card">
+      ⚡ Fast Arrival
+    </div>
+
+    <div class="trust-card">
+      🛠 Verified Mechanics
+    </div>
+
+    <div class="trust-card">
+      📍 Live Tracking
+    </div>
+
+  </section>
+
+</div>

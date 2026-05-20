@@ -1,0 +1,178 @@
+<div class="mechanic-page">
+
+  <div class="topbar">
+
+    <h1>
+      Mechanic Dashboard 🔧
+    </h1>
+
+    <button
+      class="availability-btn"
+      [class.offline]="!availability"
+      (click)="toggleAvailability()">
+
+      {{
+        availability
+          ? '🟢 Available'
+          : '🔴 Offline'
+      }}
+
+    </button>
+
+  </div>
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <h3>Today's Earnings</h3>
+      <p>₹{{ todayEarnings }}</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>Completed Jobs</h3>
+      <p>{{ completedJobs }}</p>
+    </div>
+
+  </div>
+
+  <!-- EMPTY -->
+  <div
+    class="request-card empty-card"
+    *ngIf="!incomingRequest && !activeRequest">
+
+    <div class="empty-icon">
+      🛠️
+    </div>
+
+    <h2>No Active Requests</h2>
+
+    <p>
+      Waiting for nearby customer requests...
+    </p>
+
+  </div>
+
+  <!-- INCOMING -->
+  <div
+  class="request-card incoming"
+  *ngIf="incomingRequest">
+
+  <h2>
+    New Service Request 🚨
+  </h2>
+
+  <div class="customer-box">
+
+    <div class="customer-avatar">
+      👤
+    </div>
+
+    <div>
+
+      <h3>
+        {{ incomingRequest.customerName }}
+      </h3>
+
+      <p>
+        {{ incomingRequest.customerPhone }}
+      </p>
+
+    </div>
+
+  </div>
+
+  <p>
+    <strong>Issue:</strong>
+    {{ incomingRequest.issueType }}
+  </p>
+
+  <p>
+    <strong>Description:</strong>
+    {{ incomingRequest.description }}
+  </p>
+
+  <p>
+    <strong>Estimated Price:</strong>
+    ₹{{ incomingRequest.estimatedPrice }}
+  </p>
+
+  <div class="btn-row">
+
+    <button
+      class="call-btn"
+      (click)="callCustomer()">
+
+      📞 Call
+
+    </button>
+
+    <button
+      class="nav-btn"
+      (click)="openNavigation()">
+
+      🗺 Navigate
+
+    </button>
+
+    <button
+      class="accept-btn"
+      (click)="acceptRequest()">
+
+      Accept
+
+    </button>
+
+    <button
+      class="reject-btn"
+      (click)="rejectRequest()">
+
+      Reject
+
+    </button>
+
+  </div>
+
+</div>
+
+  <!-- ACTIVE -->
+  <div
+  class="request-card active-job"
+  *ngIf="activeRequest">
+
+  <h2>
+    Active Job 🚗
+  </h2>
+
+  <p>
+    <strong>Status:</strong>
+    {{ activeRequest.status }}
+  </p>
+
+  <p>
+    <strong>Estimated Earnings:</strong>
+    ₹{{ activeRequest.estimatedPrice }}
+  </p>
+
+  <div class="btn-row">
+
+    <button
+      class="nav-btn"
+      (click)="openNavigation()">
+
+      Navigate
+
+    </button>
+
+    <button
+      *ngFor="let status of statuses"
+      (click)="updateStatus(status)">
+
+      {{ status.replace('_', ' ') }}
+
+    </button>
+
+  </div>
+
+</div>
+
+</div>

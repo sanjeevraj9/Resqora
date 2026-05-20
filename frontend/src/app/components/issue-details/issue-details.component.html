@@ -1,0 +1,136 @@
+<app-user-header></app-user-header>
+
+<div class="issue-page">
+
+  <div class="issue-card">
+
+    <!-- SERVICE SUMMARY -->
+    <div
+      class="selected-service-card"
+      *ngIf="selectedService">
+
+      <div class="service-icon">
+        {{ selectedService.icon }}
+      </div>
+
+      <div class="service-info">
+
+        <h2>
+          {{ selectedService.title }}
+        </h2>
+
+        <p>
+          {{ selectedService.desc }}
+        </p>
+
+      </div>
+
+      <div class="service-price">
+        {{ selectedService.price }}
+      </div>
+
+    </div>
+
+    <!-- ISSUE -->
+    <h2>Select Problem Type</h2>
+
+    <div class="issue-grid">
+
+      <button
+        *ngFor="let issue of issueOptions"
+        [class.active]="selectedIssue === issue"
+        (click)="chooseIssue(issue)">
+
+        {{ issue }}
+
+      </button>
+
+    </div>
+
+    <!-- BRAND -->
+    <div class="desc-box">
+
+      <label>Select Brand</label>
+
+      <select [(ngModel)]="selectedBrand">
+
+        <option value="">
+          Choose Brand
+        </option>
+
+        <option
+          *ngFor="let brand of brands"
+          [value]="brand">
+
+          {{ brand }}
+
+        </option>
+
+      </select>
+
+    </div>
+
+    <!-- MODEL -->
+    <div class="desc-box">
+
+      <label>Select Model</label>
+
+      <select [(ngModel)]="selectedModel">
+
+        <option value="">
+          Choose Model
+        </option>
+
+        <option
+          *ngFor="let model of models"
+          [value]="model">
+
+          {{ model }}
+
+        </option>
+
+      </select>
+
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="desc-box">
+
+      <label>Describe your issue</label>
+
+      <textarea
+        [(ngModel)]="problemDescription"
+        placeholder="Explain your problem clearly...">
+      </textarea>
+
+    </div>
+
+    <!-- LOCATION -->
+    <button
+      class="location-btn"
+      (click)="getCurrentLocation()">
+
+      📍 Refresh Current Location
+
+    </button>
+
+    <p
+      *ngIf="locationFetched"
+      class="success-text">
+
+      ✅ Location fetched successfully
+
+    </p>
+
+    <!-- BOOK -->
+    <button
+      class="continue-btn"
+      (click)="continueBooking()">
+
+      Book Request →
+
+    </button>
+
+  </div>
+
+</div>

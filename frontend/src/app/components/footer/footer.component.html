@@ -1,0 +1,44 @@
+<footer>
+  <div class="footer-top">
+    <div class="brand-col">
+      <a href="#" class="logo">RESQ<span>ORA</span></a>
+      <p>India's most trusted 24/7 roadside assistance & vehicle care company. Rescue, recover, and get moving — anytime, anywhere.</p>
+      <div class="socials">
+        <a href="#" class="social" *ngFor="let s of socials" [attr.aria-label]="s.label">{{ s.icon }}</a>
+      </div>
+      <div class="helpline">
+        <span>📞</span>
+        <div>
+          <div class="hl-num">1800-RESQORA</div>
+          <div class="hl-sub">24/7 Emergency Helpline</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="link-col">
+      <h4>Services</h4>
+      <ul>
+        <li *ngFor="let s of services"><a href="#">{{ s }}</a></li>
+      </ul>
+    </div>
+
+    <div class="link-col">
+      <h4>Solutions</h4>
+      <ul>
+        <li *ngFor="let s of solutions"><a href="#">{{ s }}</a></li>
+      </ul>
+    </div>
+
+    <div class="link-col">
+      <h4>Company</h4>
+      <ul>
+        <li *ngFor="let c of company"><a href="#">{{ c }}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© {{ currentYear }} Resqora. All rights reserved.</p>
+    <p class="heart">Made with ❤️ for every driver on Indian roads</p>
+  </div>
+</footer>

@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&family=Barlow+Condensed:wght@600;700;800;900&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
+:root {
+  --primary:   #e8242a;
+  --primary2:  #ff5a5f;
+  --blue:      #3b82f6;
+  --blue2:     #60a5fa;
+  --purple:    #8b5cf6;
+  --purple2:   #a78bfa;
+  --teal:      #14b8a6;
+  --orange:    #f97316;
+  --green:     #22c55e;
+
+  --white:     #ffffff;
+  --offwhite:  #f8fafc;
+  --light:     #f1f5f9;
+  --light2:    #e2e8f0;
+  --border:    rgba(0,0,0,0.08);
+  --text:      #0f172a;
+  --text2:     #334155;
+  --muted:     #64748b;
+  --muted2:    #94a3b8;
+
+  --glass:     rgba(255,255,255,0.7);
+  --glass2:    rgba(255,255,255,0.5);
+  --glass3:    rgba(255,255,255,0.85);
+  --glass-border: rgba(255,255,255,0.6);
+  --shadow:    0 4px 24px rgba(0,0,0,0.08);
+  --shadow-md: 0 8px 40px rgba(0,0,0,0.12);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Barlow', sans-serif;
+  background: var(--offwhite);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+section { padding: 80px 5%; }
+
+.section-tag {
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 2px; text-transform: uppercase;
+  color: var(--primary); margin-bottom: 12px; display: block;
+}
+
+.section-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(32px,4vw,52px); font-weight: 900;
+  text-transform: uppercase; line-height: 1;
+  margin-bottom: 16px; color: var(--text);
+}
+.section-title span { color: var(--primary); }
+
+.section-desc {
+  font-size: 15px; color: var(--muted); max-width: 560px; line-height: 1.75;
+}
+
+/* ── BUTTONS ── */
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary), #c0181e);
+  color: #fff; padding: 14px 32px; border-radius: 50px;
+  font-size: 15px; font-weight: 700; text-decoration: none;
+  letter-spacing: .4px; transition: all .25s;
+  display: inline-flex; align-items: center; gap: 10px;
+  border: none; cursor: pointer;
+  box-shadow: 0 6px 20px rgba(232,36,42,0.35);
+  &:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(232,36,42,0.45); }
+}
+
+.btn-blue {
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  color: #fff; padding: 14px 32px; border-radius: 50px;
+  font-size: 15px; font-weight: 700; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 10px;
+  border: none; cursor: pointer; transition: all .25s;
+  box-shadow: 0 6px 20px rgba(59,130,246,0.35);
+  &:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(59,130,246,0.45); }
+}
+
+.btn-teal {
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  color: #fff; padding: 14px 32px; border-radius: 50px;
+  font-size: 15px; font-weight: 700; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 10px;
+  border: none; cursor: pointer; transition: all .25s;
+  box-shadow: 0 6px 20px rgba(20,184,166,0.35);
+  &:hover { transform: translateY(-2px); }
+}
+
+.btn-outline {
+  border: 2px solid var(--primary); color: var(--primary);
+  padding: 12px 30px; border-radius: 50px;
+  font-size: 15px; font-weight: 700; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 10px;
+  background: transparent; cursor: pointer; transition: all .25s;
+  &:hover { background: var(--primary); color: #fff; transform: translateY(-2px); }
+}
+
+.btn-glass {
+  background: var(--glass2); backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border); color: var(--text);
+  padding: 13px 28px; border-radius: 50px;
+  font-size: 15px; font-weight: 600; text-decoration: none;
+  display: inline-flex; align-items: center; gap: 10px;
+  cursor: pointer; transition: all .25s;
+  &:hover { background: var(--glass3); transform: translateY(-2px); box-shadow: var(--shadow); }
+}
+
+/* Glass card */
+.glass-card {
+  background: var(--glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--light); }
+::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 3px; }

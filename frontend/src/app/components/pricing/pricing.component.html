@@ -1,0 +1,27 @@
+<section id="pricing" class="pricing">
+  <div class="header">
+    <span class="section-tag">Flexible Plans</span>
+    <h2 class="section-title">Choose Your <span>Protection Plan</span></h2>
+    <p class="section-desc">Affordable plans for every driver. Cancel anytime. No hidden charges.</p>
+  </div>
+  <div class="plans-grid">
+    <div class="plan-card" *ngFor="let plan of plans" [class.popular]="plan.popular">
+      <div class="popular-badge" *ngIf="plan.badge">{{ plan.badge }}</div>
+      <div class="plan-header">
+        <h3 class="plan-name">{{ plan.name }}</h3>
+        <div class="plan-price">
+          <span class="price">{{ plan.price }}</span>
+          <span class="period">{{ plan.period }}</span>
+        </div>
+        <p class="plan-desc">{{ plan.desc }}</p>
+      </div>
+      <ul class="features">
+        <li *ngFor="let feat of plan.features">
+          <span class="check" [class]="plan.checkClass">✓</span> {{ feat }}
+        </li>
+      </ul>
+      <a href="#contact" class="plan-cta" [class]="plan.ctaClass">{{ plan.cta }} →</a>
+    </div>
+  </div>
+  <p class="note">All plans include GST. Activate instantly after payment. Valid for 1 year from activation.</p>
+</section>

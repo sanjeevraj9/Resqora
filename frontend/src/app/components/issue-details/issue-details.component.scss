@@ -1,0 +1,170 @@
+.issue-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: linear-gradient(
+    180deg,
+    #f8fafc,
+    #ffffff
+  );
+}
+
+.issue-card {
+  max-width: 900px;
+  margin: 0 auto;
+  background: white;
+  padding: 36px;
+  border-radius: 28px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+}
+
+.selected-service-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: linear-gradient(
+    135deg,
+    #f9fafb,
+    #f3f4f6
+  );
+  padding: 24px;
+  border-radius: 22px;
+  margin-bottom: 36px;
+}
+
+.service-icon {
+  font-size: 54px;
+}
+
+.service-info {
+  flex: 1;
+}
+
+.service-info h2 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.service-info p {
+  margin: 0;
+  color: #64748b;
+}
+
+.service-price {
+  font-size: 28px;
+  font-weight: 800;
+  color: #dc2626;
+}
+
+.issue-card h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #111827;
+}
+
+.issue-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+  margin-bottom: 30px;
+}
+
+.issue-grid button {
+  padding: 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 16px;
+  background: white;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.25s;
+}
+
+.issue-grid button:hover {
+  transform: translateY(-2px);
+}
+
+.issue-grid button.active {
+  background: #111827;
+  color: white;
+  border-color: #111827;
+}
+
+.desc-box {
+  margin-bottom: 22px;
+}
+
+.desc-box label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.desc-box select,
+.desc-box textarea {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  font-size: 15px;
+  outline: none;
+}
+
+.desc-box textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.location-btn {
+  width: 100%;
+  padding: 16px;
+  border: none;
+  border-radius: 16px;
+  background: #f3f4f6;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+
+.success-text {
+  color: #16a34a;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.continue-btn {
+  width: 100%;
+  padding: 18px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    #dc2626,
+    #991b1b
+  );
+  color: white;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.continue-btn:hover {
+  transform: translateY(-3px);
+}
+
+@media (max-width: 768px) {
+  .selected-service-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .issue-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .issue-card {
+    padding: 22px;
+  }
+}

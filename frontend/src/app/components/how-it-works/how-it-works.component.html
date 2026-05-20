@@ -1,0 +1,16 @@
+<section id="how" class="how">
+  <div class="header">
+    <span class="section-tag">Simple Process</span>
+    <h2 class="section-title">How <span>Resqora</span> Works</h2>
+    <p class="section-desc">Get help in 4 simple steps. We dispatch the nearest expert to your location instantly.</p>
+  </div>
+  <div class="steps">
+    <div class="step" *ngFor="let step of steps; let i = index">
+      <div class="step-connector" *ngIf="i < steps.length - 1"></div>
+      <div class="step-num">Step {{ step.num }}</div>
+      <div class="step-icon-wrap" [class]="step.iconClass">{{ step.icon }}</div>
+      <h3>{{ step.title }}</h3>
+      <p>{{ step.desc }}</p>
+    </div>
+  </div>
+</section>

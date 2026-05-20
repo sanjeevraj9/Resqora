@@ -1,0 +1,499 @@
+<app-user-header
+  [selectedCity]="selectedCity"
+  (cityClicked)="openLocationModal()"
+  (accountClicked)="openProfile()">
+</app-user-header>
+<div
+  class="active-request-banner"
+  *ngIf="activeRequest">
+
+  <div class="banner-left">
+
+    <div class="banner-icon">
+      🚗
+    </div>
+
+    <div>
+
+      <h3>
+        Active Rescue Request
+      </h3>
+
+      <p>
+        Status:
+        {{ activeRequest.status }}
+      </p>
+
+    </div>
+
+  </div>
+
+  <div class="banner-actions">
+
+    <button
+      class="track-btn"
+      (click)="trackActiveRequest()">
+
+      Track Live
+
+    </button>
+
+    <button
+      class="cancel-btn"
+      *ngIf="
+        activeRequest.status === 'REQUESTED' ||
+        activeRequest.status === 'ACCEPTED'
+      "
+      (click)="cancelActiveRequest()">
+
+      Cancel
+
+    </button>
+
+  </div>
+
+</div>
+<div class="user-home">
+
+
+  <!-- HERO -->
+  <section class="hero-section">
+
+    <!-- LEFT SERVICES -->
+    <div class="service-side">
+
+      <div class="mini-card">
+        <div class="icon">🛞</div>
+        <h3>Puncture Repair</h3>
+        <p>Quick tyre puncture assistance anywhere</p>
+      </div>
+
+      <div class="mini-card">
+        <div class="icon">⛽</div>
+        <h3>Fuel Delivery</h3>
+        <p>Emergency petrol delivery support</p>
+      </div>
+
+      <div class="mini-card">
+        <div class="icon">🔋</div>
+        <h3>Battery Jumpstart</h3>
+        <p>Dead battery instant support</p>
+      </div>
+
+      <div class="mini-card">
+        <div class="icon">🚛</div>
+        <h3>Towing</h3>
+        <p>Fast towing rescue assistance</p>
+      </div>
+
+    </div>
+
+    <!-- RIGHT HERO -->
+    <div class="hero-main">
+
+      <p class="hero-badge">
+        🛡️ India’s trusted roadside rescue
+      </p>
+
+      <h1>
+        24/7 Bike & Car <br>
+        Rescue Support
+      </h1>
+
+      <p class="hero-desc">
+        Fast emergency roadside help across India.
+        Puncture, towing, fuel delivery, battery support,
+        engine issue & breakdown assistance.
+      </p>
+
+      <!-- BOOKING BAR -->
+      <div class="booking-bar">
+
+        <!-- CURRENT CITY -->
+        <div class="input-block">
+          <label>Current City</label>
+
+          <div
+            class="city-display clickable-location"
+            (click)="openLocationModal()">
+
+            {{ selectedCity || 'Fetching location...' }}
+
+          </div>
+        </div>
+
+        <!-- VEHICLE -->
+        <div class="input-block">
+          <label>Vehicle Type</label>
+
+          <select [(ngModel)]="selectedVehicle">
+
+            <option
+              *ngFor="let vehicle of vehicleOptions"
+              [value]="vehicle">
+
+              {{ vehicle }}
+
+            </option>
+
+          </select>
+        </div>
+
+        <!-- BUTTON -->
+        <button
+          class="price-btn"
+          (click)="checkPrice()">
+
+          Check Price →
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services-section">
+
+    <h2>Emergency Services</h2>
+
+    <div class="service-grid">
+
+      <div
+  class="service-card"
+  *ngFor="let service of serviceCards"
+  (click)="openService(service)">
+
+        <div class="service-icon">
+          {{ service.icon }}
+        </div>
+
+        <h3>{{ service.title }}</h3>
+
+        <p>{{ service.desc }}</p>
+
+        <button>
+          View Details →
+        </button>
+
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- SOS BUTTON -->
+  <button
+    class="sos-floating-btn"
+    (click)="openSOS()">
+
+    🚨
+
+  </button>
+
+</div>
+
+<!-- LOCATION MODAL -->
+<div
+  class="profile-overlay"
+  *ngIf="showLocationModal">
+
+  <div class="profile-modal">
+
+    <button
+      class="close-btn"
+      (click)="closeLocationModal()">
+
+      ✕
+
+    </button>
+
+    <h2>Change Location</h2>
+
+    <label>Select State</label>
+
+    <select [(ngModel)]="selectedState">
+
+      <option value="">
+        Choose State
+      </option>
+
+      <option
+        *ngFor="let state of states"
+        [value]="state">
+
+        {{ state }}
+
+      </option>
+
+    </select>
+
+    <label>Select City</label>
+
+    <select [(ngModel)]="selectedCity">
+
+      <option value="">
+        Choose City
+      </option>
+
+      <option
+        *ngFor="let city of cities"
+        [value]="city">
+
+        {{ city }}
+
+      </option>
+
+    </select>
+
+    <button
+      class="save-btn"
+      (click)="saveLocation()">
+
+      Save Location
+
+    </button>
+
+  </div>
+
+</div>
+
+<!-- PROFILE MODAL -->
+<div
+  class="profile-overlay"
+  *ngIf="showProfileModal">
+
+  <div class="profile-modal">
+
+    <button
+      class="close-btn"
+      (click)="closeProfile()">
+
+      ✕
+
+    </button>
+
+    <h2>My Account</h2>
+
+    <div
+      class="profile-info"
+      *ngIf="profile">
+
+      <div class="profile-avatar">
+        👤
+      </div>
+
+      <div class="profile-detail">
+
+        <!-- VIEW MODE -->
+        <div *ngIf="!editMode">
+
+          <p>
+            <strong>Name:</strong>
+            {{ profile.name }}
+          </p>
+
+          <p>
+            <strong>Email:</strong>
+            {{ profile.email }}
+          </p>
+
+          <p>
+            <strong>Phone:</strong>
+            {{ profile.phone }}
+          </p>
+
+          <p>
+            <strong>Emergency Contact:</strong>
+            {{ profile.emergencyContactName || 'Not Added' }}
+          </p>
+
+          <p>
+            <strong>Emergency Phone:</strong>
+            {{ profile.emergencyContactPhone || 'Not Added' }}
+          </p>
+
+          <p>
+            <strong>Role:</strong>
+            USER
+          </p>
+
+          <button
+            class="edit-btn"
+            (click)="enableEdit()">
+
+            Edit Profile
+
+          </button>
+
+        </div>
+
+        <!-- EDIT MODE -->
+        <div *ngIf="editMode">
+
+          <label>Name</label>
+
+          <input
+            [(ngModel)]="editForm.name"
+            placeholder="Enter name" />
+
+          <label>Phone</label>
+
+          <input
+            [(ngModel)]="editForm.phone"
+            placeholder="Enter phone" />
+
+          <label>Emergency Contact Name</label>
+
+          <input
+            [(ngModel)]="editForm.emergencyContactName"
+            placeholder="Enter emergency contact name" />
+
+          <label>Emergency Contact Phone</label>
+
+          <input
+            [(ngModel)]="editForm.emergencyContactPhone"
+            placeholder="Enter emergency contact phone" />
+
+          <p>
+            <strong>Email:</strong>
+            {{ profile.email }}
+          </p>
+
+          <div class="edit-actions">
+
+            <button
+              class="save-btn"
+              (click)="saveProfile()">
+
+              Save
+
+            </button>
+
+            <button
+              class="cancel-edit-btn"
+              (click)="cancelEdit()">
+
+              Cancel
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="profile-actions">
+
+      <button
+        class="history-btn"
+        (click)="toggleHistory()">
+
+        {{
+          showHistory
+            ? 'Hide Booking History'
+            : 'View Booking History'
+        }}
+
+      </button>
+
+      <button
+        class="logout-btn"
+        (click)="logout()">
+
+        Logout
+
+      </button>
+
+    </div>
+
+    <div
+      class="history-section"
+      *ngIf="showHistory">
+
+      <h3>Booking History</h3>
+
+     <div
+  class="empty-history"
+  *ngIf="history.length === 0">
+
+  No bookings yet 🚗
+
+</div>
+
+<div
+  class="history-card"
+  *ngFor="let item of history">
+
+  <div class="history-top">
+
+    <div>
+
+      <h4>
+        {{ item.issueType.replace('_', ' ') }}
+      </h4>
+
+      <p>
+        {{ item.vehicleBrand }}
+        {{ item.vehicleModel }}
+      </p>
+
+    </div>
+
+    <span
+      class="status-badge"
+      [ngClass]="getStatusClass(item.status)">
+
+      {{ item.status }}
+
+    </span>
+
+  </div>
+
+  <div class="history-meta">
+
+    <p>
+      ₹{{ item.estimatedPrice }}
+    </p>
+
+    <p>
+      {{ formatDate(item.createdAt) }}
+    </p>
+
+    <p *ngIf="item.mechanicName">
+      Mechanic:
+      {{ item.mechanicName }}
+    </p>
+
+  </div>
+
+  <div class="history-actions">
+
+    <button
+      class="rebook-btn"
+      (click)="rebook(item)">
+
+      Rebook
+
+    </button>
+
+    <button
+      class="view-btn">
+
+      View Details
+
+    </button>
+
+  </div>
+
+</div>
+      </div>
+
+    </div>
+
+  </div>

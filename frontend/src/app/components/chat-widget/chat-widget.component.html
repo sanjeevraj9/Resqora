@@ -1,0 +1,60 @@
+<!-- Chat Toggle Button -->
+<button class="chat-toggle" (click)="toggleChat()" [class.open]="isOpen">
+  <span class="toggle-icon">{{ isOpen ? '✕' : '💬' }}</span>
+  <span class="chat-label" *ngIf="!isOpen">Live Support</span>
+</button>
+
+<!-- Chat Window -->
+<div class="chat-window" [class.visible]="isOpen">
+  <!-- Header -->
+  <div class="chat-header">
+    <div class="agent-info">
+      <div class="agent-avatar">R</div>
+      <div>
+        <div class="agent-name">Riya — Resqora Support</div>
+        <div class="agent-status"><span class="dot"></span> Online • Replies instantly</div>
+      </div>
+    </div>
+    <button class="close-chat" (click)="toggleChat()">✕</button>
+  </div>
+
+  <!-- Messages -->
+  <div class="chat-messages">
+    <div
+      class="message"
+      *ngFor="let msg of messages"
+      [class.user-msg]="msg.from === 'user'"
+      [class.agent-msg]="msg.from === 'agent'"
+    >
+      <div class="bubble">{{ msg.text }}</div>
+      <div class="msg-time">{{ msg.time }}</div>
+    </div>
+
+    <!-- Typing indicator -->
+    <div class="message agent-msg" *ngIf="isTyping">
+      <div class="bubble typing">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Replies -->
+  <div class="quick-replies" *ngIf="messages.length <= 2">
+    <button
+      class="quick-btn"
+      *ngFor="let qr of quickReplies"
+      (click)="sendQuick(qr)"
+    >{{ qr }}</button>
+  </div>
+
+  <!-- Input -->
+  <div class="chat-input">
+    <input
+      type="text"
+      placeholder="Type a message..."
+      [(ngModel)]="inputText"
+      (keydown)="onEnter($event)"
+    />
+    <button class="send-btn" (click)="sendMessage()">➤</button>
+  </div>
+</div>

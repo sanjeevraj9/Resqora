@@ -1,0 +1,17 @@
+<section class="testimonials">
+  <div class="header">
+    <span class="section-tag">Customer Love</span>
+    <h2 class="section-title">Loved By The People <span>We Serve</span></h2>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card" *ngFor="let t of testimonials">
+      <div class="quote">"</div>
+      <div class="stars" [class]="t.starClass">★★★★★</div>
+      <p>{{ t.text }}</p>
+      <div class="author">
+        <div class="avatar" [class]="t.avatarClass">{{ t.i }}</div>
+        <div><div class="name">{{ t.name }}</div><div class="role">{{ t.role }}</div></div>
+      </div>
+    </div>
+  </div>
+</section>

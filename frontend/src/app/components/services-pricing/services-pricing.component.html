@@ -1,0 +1,48 @@
+ <app-user-header></app-user-header>
+
+<div class="pricing-page">
+ 
+
+  <section class="hero">
+
+    <p class="badge">
+      🚨 Emergency roadside support
+    </p>
+
+    <h1>
+      Choose Your Service
+    </h1>
+
+    <p class="sub">
+      Fast roadside assistance for bikes & cars.
+      Transparent pricing with instant booking.
+    </p>
+
+  </section>
+
+  <section class="pricing-grid">
+
+    <div
+      class="pricing-card"
+      *ngFor="let service of services">
+
+      <div class="icon">
+        {{ service.icon }}
+      </div>
+
+      <h3>{{ service.title }}</h3>
+
+      <p>{{ service.desc }}</p>
+
+      <div class="price">
+        {{ service.price }}
+      </div>
+
+      <button (click)="selectService(service)">
+  Book Service →
+</button>
+    </div>
+
+  </section>
+
+</div>
