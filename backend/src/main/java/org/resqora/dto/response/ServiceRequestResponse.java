@@ -3,6 +3,8 @@ package org.resqora.dto.response;
 import lombok.Builder;
 import lombok.Data;
 import org.resqora.enums.IssueType;
+import org.resqora.enums.PaymentMethod;
+import org.resqora.enums.PaymentStatus;
 import org.resqora.enums.RequestStatus;
 
 import java.math.BigDecimal;
@@ -24,4 +26,7 @@ public class ServiceRequestResponse {
     private String vehicleBrand;
     private String vehicleModel;
     private String mechanicName;
+    private String customerName;
+    private PaymentMethod paymentMethod;
+    private PaymentStatus paymentStatus;
 }

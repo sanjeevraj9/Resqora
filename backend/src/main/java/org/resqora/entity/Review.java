@@ -28,7 +28,7 @@ public class Review {
     @JoinColumn(name = "mechanic_id")
     private User mechanic;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "request_id")
     private ServiceRequest request;
 }

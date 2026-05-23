@@ -7,6 +7,9 @@ import { ServicesPricingComponent } from './components/services-pricing/services
 import { IssueDetailsComponent } from './components/issue-details/issue-details.component';
 import { TrackingComponent } from './components/tracking/tracking.component';
 import { ServiceDetailsComponent } from './components/service-details/service-details.component';
+import { MechanicProfileComponent } from './components/mechanic-profile/mechanic-profile.component';
+import { MechanicHistoryComponent } from './components/mechanic-history/mechanic-history.component';
+import { PaymentComponent } from './components/payment/payment.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -27,7 +30,15 @@ export const routes: Routes = [
   path: 'service-details/:type',
   component: ServiceDetailsComponent
 },
-
+  { path: 'mechanic-profile', component: MechanicProfileComponent },
+{
+  path: 'mechanic-history',
+  component: MechanicHistoryComponent
+},
+{
+  path: 'payment',
+  component: PaymentComponent
+},
   { path: '**', redirectTo: '' }
 
   

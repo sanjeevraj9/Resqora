@@ -1,0 +1,56 @@
+<div class="payment-page">
+
+  <div class="payment-card">
+
+    <h1>Complete Payment</h1>
+
+    <p class="subtitle">
+      Choose your preferred payment method
+    </p>
+
+    <div
+      class="payment-option"
+      [class.active]="selectedMethod === 'UPI'"
+      (click)="selectMethod('UPI')">
+
+      <div class="icon">💳</div>
+
+      <div>
+        <h3>UPI Payment</h3>
+        <p>Pay instantly using UPI</p>
+      </div>
+
+    </div>
+
+    <div
+      class="payment-option"
+      [class.active]="selectedMethod === 'COD'"
+      (click)="selectMethod('COD')">
+
+      <div class="icon">💵</div>
+
+      <div>
+        <h3>Cash on Delivery</h3>
+        <p>Pay after service completion</p>
+      </div>
+
+    </div>
+
+    <button
+      class="pay-btn"
+      [disabled]="loading"
+      (click)="continuePayment()">
+
+      {{
+        loading
+          ? 'Processing...'
+          : selectedMethod === 'UPI'
+            ? 'Pay Now'
+            : 'Continue'
+      }}
+
+    </button>
+
+  </div>
+
+</div>

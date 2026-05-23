@@ -23,7 +23,7 @@ export class ChatWidgetComponent {
   messages: Message[] = [
     {
       from: 'agent',
-      text: '👋 Hi! I\'m Riya from Resqora Support. How can I help you today?',
+      text: '👋 Hi! I\'m Rani from Resqora Support. How can I help you today?',
       time: this.getTime()
     }
   ];

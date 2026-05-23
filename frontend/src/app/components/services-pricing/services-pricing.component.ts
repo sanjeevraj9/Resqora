@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { UserHeaderComponent } from '../user-header/user-header.component';
+import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header.component';
 
 @Component({
   selector: 'app-services-pricing',
   standalone: true,
-  imports: [CommonModule, UserHeaderComponent],
+  imports: [CommonModule, UserShellHeaderComponent],
   templateUrl: './services-pricing.component.html',
   styleUrls: ['./services-pricing.component.scss']
 })

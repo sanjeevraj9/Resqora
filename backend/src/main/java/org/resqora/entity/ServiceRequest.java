@@ -4,6 +4,8 @@ package org.resqora.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.resqora.enums.IssueType;
+import org.resqora.enums.PaymentMethod;
+import org.resqora.enums.PaymentStatus;
 import org.resqora.enums.RequestStatus;
 
 import java.math.BigDecimal;
@@ -60,6 +62,12 @@ public class ServiceRequest {
             inverseJoinColumns = @JoinColumn(name = "mechanic_id")
     )
     private List<User> rejectedMechanics = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     @PrePersist
     public void prePersist(){

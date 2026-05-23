@@ -162,4 +162,12 @@ public class ServiceRequestController {
                 )
         );
     }
+    @PutMapping("/{id}/cash-collected")
+    public ResponseEntity<ServiceRequestResponse> markCashCollected(
+            @PathVariable Long id
+    ) {
+        return ResponseEntity.ok(
+                serviceRequestService.markCashCollected(id)
+        );
+    }
 }

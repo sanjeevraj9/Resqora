@@ -1,0 +1,100 @@
+<app-mechanic-shell-header></app-mechanic-shell-header>
+<div class="history-page">
+
+  <!-- TOPBAR -->
+  
+
+
+  <!-- CONTENT -->
+  <div class="history-container">
+
+    <h1>Job History 📋</h1>
+
+    <div
+      class="empty-state"
+      *ngIf="paginatedJobs.length === 0">
+
+      No completed jobs yet 🚗
+
+    </div>
+
+    <div
+      class="job-card"
+      *ngFor="let job of paginatedJobs">
+
+      <div class="job-top">
+
+        <div>
+
+          <h3>
+            {{ job.issueType.replace('_', ' ') }}
+          </h3>
+
+          <p>
+            {{ job.vehicleBrand }}
+            {{ job.vehicleModel }}
+          </p>
+
+        </div>
+
+        <span
+          class="status-badge"
+          [class.completed]="job.status === 'COMPLETED'">
+
+          {{ job.status }}
+
+        </span>
+
+      </div>
+
+      <div class="job-meta">
+
+        <p>
+          <strong>Customer:</strong>
+          {{ job.customerName || 'Customer' }}
+        </p>
+
+        <p>
+          <strong>Earnings:</strong>
+          ₹{{ job.estimatedPrice }}
+        </p>
+
+        <p>
+          <strong>Date:</strong>
+          {{ formatDate(job.createdAt) }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- PAGINATION -->
+    <div
+      class="pagination"
+      *ngIf="totalPages > 1">
+
+      <button
+        (click)="prevPage()"
+        [disabled]="currentPage === 1">
+
+        Previous
+
+      </button>
+
+      <span>
+        Page {{ currentPage }} / {{ totalPages }}
+      </span>
+
+      <button
+        (click)="nextPage()"
+        [disabled]="currentPage === totalPages">
+
+        Next
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import {
+  Component,
+  OnInit
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { AuthService } from '../services/auth.service';
 import { RequestService } from '../services/request.service';
-import { UserHeaderComponent } from '../user-header/user-header.component';
+import { AuthService } from '../services/auth.service';
+import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header.component';
 
 @Component({
   selector: 'app-user-home',
@@ -13,233 +17,138 @@ import { UserHeaderComponent } from '../user-header/user-header.component';
   imports: [
     CommonModule,
     FormsModule,
-    UserHeaderComponent
+    UserShellHeaderComponent
   ],
   templateUrl: './user-home.component.html',
   styleUrls: ['./user-home.component.scss']
 })
-export class UserHomeComponent implements OnInit {
+export class UserHomeComponent
+  implements OnInit {
 
-  selectedCity = '';
-  selectedState = '';
+  showCrashAlert = false;
+  sosCountdown = 10;
+  sosTimer: any;
+
+  get selectedCity(): string {
+    return localStorage.getItem(
+      'selectedCity'
+    ) || 'Indore';
+  }
+
   selectedVehicle = 'Bike';
-
-  showProfileModal = false;
-  showHistory = false;
-  editMode = false;
-  showLocationModal = false;
-
-  profile: any = null;
-  history: any[] = [];
-  activeRequest: any = null;
-
-  editForm = {
-    name: '',
-    phone: '',
-    emergencyContactName: '',
-    emergencyContactPhone: ''
-  };
 
   vehicleOptions = [
     'Bike',
-    'Car'
+    'Car',
+    'EV Bike',
+    'EV Car'
   ];
 
-  states = [
-    'Madhya Pradesh',
-    'Maharashtra',
-    'Delhi',
-    'Uttar Pradesh'
-  ];
-
-  cityMap: any = {
-    'Madhya Pradesh': ['Indore', 'Bhopal'],
-    'Maharashtra': ['Mumbai', 'Pune'],
-    'Delhi': ['New Delhi'],
-    'Uttar Pradesh': ['Lucknow', 'Noida']
-  };
+  activeRequest: any = null;
 
   serviceCards = [
     {
-      title: 'Puncture Repair',
-      desc: 'Fast tyre puncture repair anywhere',
       icon: '🛞',
-      type: 'puncture'
+      title: 'Puncture Repair',
+      desc: 'Quick tyre puncture assistance'
     },
     {
-      title: 'Fuel Delivery',
-      desc: 'Emergency petrol delivery',
       icon: '⛽',
-      type: 'fuel'
+      title: 'Fuel Delivery',
+      desc: 'Emergency fuel support'
     },
     {
-      title: 'Battery Jumpstart',
-      desc: 'Dead battery quick support',
       icon: '🔋',
-      type: 'battery'
+      title: 'Battery Jumpstart',
+      desc: 'Instant battery rescue'
     },
     {
-      title: 'Towing',
-      desc: 'Instant towing assistance',
       icon: '🚛',
-      type: 'towing'
+      title: 'Towing',
+      desc: 'Fast towing support'
     },
     {
-      title: 'Engine Issue',
-      desc: 'Engine diagnostics & help',
-      icon: '⚙️',
-      type: 'engine'
+      icon: '🛠️',
+      title: 'Engine Repair',
+      desc: 'Mechanical issue support'
     },
     {
-      title: 'General Breakdown',
-      desc: 'Mechanic inspection support',
-      icon: '🧰',
-      type: 'breakdown'
+      icon: '⚡',
+      title: 'EV Support',
+      desc: 'EV emergency assistance'
     }
-    
   ];
-  formatDate(date: string) {
-  return new Date(date).toLocaleDateString(
-    'en-IN',
-    {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    }
-  );
-}
-
-rebook(item: any) {
-  const serviceMap: any = {
-    PUNCTURE: 'puncture',
-    FUEL_EMPTY: 'fuel',
-    BATTERY_ISSUE: 'battery',
-    TOWING: 'towing',
-    ENGINE_PROBLEM: 'engine',
-    OTHER: 'breakdown'
-  };
-
-  this.router.navigate([
-    '/service-details',
-    serviceMap[item.issueType] || 'breakdown'
-  ]);
-}
-
-getStatusClass(status: string) {
-  switch (status) {
-    case 'COMPLETED':
-      return 'status-completed';
-
-    case 'CANCELLED':
-      return 'status-cancelled';
-
-    case 'ACCEPTED':
-    case 'ON_THE_WAY':
-      return 'status-active';
-
-    default:
-      return 'status-pending';
-  }
-}
 
   constructor(
     private router: Router,
-    private authService: AuthService,
-    private requestService: RequestService
+    private requestService: RequestService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.autoFetchLocation();
+    const saved =
+      localStorage.getItem('activeRequest');
 
-    this.authService.getProfile().subscribe({
-      next: (res) => {
-        this.profile = res;
-      }
-    });
-
-    this.loadActiveRequest();
-    
+    if (saved) {
+      this.activeRequest =
+        JSON.parse(saved);
+    }
   }
 
-  get cities(): string[] {
-    return this.cityMap[this.selectedState] || [];
-  }
-
-  autoFetchLocation() {
-    if (!navigator.geolocation) return;
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-
-        fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
-        )
-          .then((res) => res.json())
-          .then((data) => {
-            this.selectedCity =
-              data.address.city ||
-              data.address.town ||
-              data.address.village ||
-              'Your City';
-
-            localStorage.setItem(
-              'selectedCity',
-              this.selectedCity
-            );
-          });
+  checkPrice() {
+    this.router.navigate(
+      ['/services'],
+      {
+        queryParams: {
+          vehicle:
+            this.selectedVehicle
+        }
       }
     );
   }
 
-  loadActiveRequest() {
-  const saved =
-    localStorage.getItem('activeRequest');
+  openService(service: any) {
+    localStorage.setItem(
+      'pendingService',
+      JSON.stringify(service)
+    );
 
-  if (!saved) return;
-
-  const request =
-    JSON.parse(saved);
-
-  this.requestService
-    .getRequestById(request.id)
-    .subscribe({
-      next: (res) => {
-
-        if (
-          res.status === 'COMPLETED' ||
-          res.status === 'CANCELLED'
-        ) {
-          localStorage.removeItem('activeRequest');
-          this.activeRequest = null;
-          return;
-        }
-
-        this.activeRequest = res;
-      },
-
-      error: () => {
-        localStorage.removeItem('activeRequest');
-        this.activeRequest = null;
-      }
-    });
-}
+    this.router.navigate([
+      '/service-details',
+      service.title
+    ]);
+  }
 
   trackActiveRequest() {
-    this.router.navigate(['/tracking']);
+    this.router.navigate([
+      '/tracking'
+    ]);
   }
 
   cancelActiveRequest() {
     if (!this.activeRequest) return;
 
+    const confirmCancel =
+      confirm(
+        'Cancel active request?'
+      );
+
+    if (!confirmCancel) return;
+
     this.requestService
-      .cancelRequest(this.activeRequest.id)
+      .cancelRequest(
+        this.activeRequest.id
+      )
       .subscribe({
         next: () => {
-          alert('Request cancelled');
+          alert(
+            'Request cancelled'
+          );
 
-          localStorage.removeItem('activeRequest');
+          localStorage.removeItem(
+            'activeRequest'
+          );
+
           this.activeRequest = null;
         },
         error: () => {
@@ -248,135 +157,93 @@ getStatusClass(status: string) {
       });
   }
 
-  openService(service: any) {
-    this.router.navigate([
-      '/service-details',
-      service.type
-    ]);
+  openSOS() {
+    this.showCrashAlert = true;
+
+    this.sosCountdown = 10;
+
+    this.sosTimer =
+      setInterval(() => {
+        this.sosCountdown--;
+
+        if (
+          this.sosCountdown <= 0
+        ) {
+          clearInterval(
+            this.sosTimer
+          );
+
+          this.triggerEmergencySOS();
+        }
+      }, 1000);
   }
 
-  openLocationModal() {
-    this.showLocationModal = true;
-  }
-
-  closeLocationModal() {
-    this.showLocationModal = false;
-  }
-
-  saveLocation() {
-    localStorage.setItem(
-      'selectedCity',
-      this.selectedCity
+  cancelSOS() {
+    clearInterval(
+      this.sosTimer
     );
 
-    this.showLocationModal = false;
+    this.showCrashAlert = false;
   }
 
-  openProfile() {
-    this.showProfileModal = true;
-  }
+  triggerEmergencySOS() {
+    this.showCrashAlert = false;
 
-  closeProfile() {
-    this.showProfileModal = false;
-    this.showHistory = false;
-  }
+    this.authService
+      .getProfile()
+      .subscribe({
+        next: (profile: any) => {
+          const emergencyPhone =
+            profile.emergencyContactPhone;
 
-  toggleHistory() {
-    this.showHistory = !this.showHistory;
+          const emergencyName =
+            profile.emergencyContactName;
 
-    if (this.showHistory && this.history.length === 0) {
-      this.requestService.getHistory().subscribe({
-        next: (res) => {
-          this.history = res;
+          if (!emergencyPhone) {
+            alert(
+              'Emergency contact not added'
+            );
+            return;
+          }
+
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              const lat =
+                position.coords.latitude;
+
+              const lng =
+                position.coords.longitude;
+
+              const locationUrl =
+                `https://maps.google.com/?q=${lat},${lng}`;
+
+              const message =
+                `🚨 EMERGENCY! Possible accident detected. My live location: ${locationUrl}`;
+
+              window.location.href =
+                `whatsapp://send?phone=91${emergencyPhone}&text=${encodeURIComponent(message)}`;
+
+              setTimeout(() => {
+                window.location.href =
+                  `tel:${emergencyPhone}`;
+              }, 2000);
+
+              alert(
+                `Emergency alert sent to ${emergencyName}`
+              );
+            },
+            () => {
+              alert(
+                'Location access denied'
+              );
+            }
+          );
+        },
+        error: () => {
+          alert(
+            'Failed to fetch profile'
+          );
         }
       });
-    }
-  }
-  checkPrice() {
-  if (!this.selectedCity) {
-    alert('Please select city');
-    return;
-  }
-
-  localStorage.setItem(
-    'selectedVehicleType',
-    this.selectedVehicle
-  );
-
-  this.router.navigate(['/services']);
-}
-
-enableEdit() {
-  this.editMode = true;
-
-  if (this.profile) {
-    this.editForm = {
-      name: this.profile.name || '',
-      phone: this.profile.phone || '',
-      emergencyContactName:
-        this.profile.emergencyContactName || '',
-      emergencyContactPhone:
-        this.profile.emergencyContactPhone || ''
-    };
-  }
-}
-
-cancelEdit() {
-  this.editMode = false;
-}
-
-saveProfile() {
-  this.authService
-    .updateProfile(this.editForm)
-    .subscribe({
-      next: (res) => {
-        this.profile = res;
-        this.editMode = false;
-        alert('Profile updated successfully');
-      },
-      error: () => {
-        alert('Profile update failed');
-      }
-    });
-}
-
-openSOS() {
-  if (!this.profile?.emergencyContactPhone) {
-    alert(
-      'Please add emergency contact first'
-    );
-    return;
-  }
-
-  if (!navigator.geolocation) {
-    alert('Location not supported');
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-
-      const mapLink =
-        `https://www.google.com/maps?q=${lat},${lng}`;
-
-      const phone =
-        this.profile.emergencyContactPhone;
-
-      const message =
-        `EMERGENCY! My live location: ${mapLink}`;
-
-      window.open(
-        `https://wa.me/91${phone}?text=${encodeURIComponent(message)}`,
-        '_blank'
-      );
-    }
-  );
-}
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/']);
   }
 }

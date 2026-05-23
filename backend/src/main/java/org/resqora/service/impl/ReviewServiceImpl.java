@@ -8,6 +8,7 @@ import org.resqora.entity.MechanicProfile;
 import org.resqora.entity.Review;
 import org.resqora.entity.ServiceRequest;
 import org.resqora.entity.User;
+import org.resqora.enums.RequestStatus;
 import org.resqora.exception.ResourceNotFoundException;
 import org.resqora.repository.MechanicProfileRepository;
 import org.resqora.repository.ReviewRepository;
@@ -29,22 +30,63 @@ public class ReviewServiceImpl  implements ReviewService {
     private final MechanicProfileRepository mechanicProfileRepository;
 
     @Override
-    public void createReview(CreateReviewRequest request,String email){
+    public void createReview(
+            CreateReviewRequest request,
+            String email
+    ) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "User not found"
+                        ));
 
-        User user=userRepository.findByEmail(email).orElseThrow(()->
-                new ResourceNotFoundException("user not found"));
+        ServiceRequest serviceRequest =
+                serviceRequestRepository.findById(
+                        request.getRequestId()
+                ).orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Request not found"
+                        ));
 
-
-
-        ServiceRequest serviceRequest=serviceRequestRepository.findById(request.getRequestId())
-                .orElseThrow(()-> new ResourceNotFoundException("Request not found"));
-        if (reviewRepository.existsByRequest(serviceRequest)) {
-            throw new RuntimeException("Review already submitted");
+        if (serviceRequest.getUser() == null) {
+            throw new RuntimeException(
+                    "Request user missing"
+            );
         }
 
-        User mechanic=serviceRequest.getMechanic();
+        if (!serviceRequest.getUser()
+                .getId()
+                .equals(user.getId())) {
+            throw new RuntimeException(
+                    "Unauthorized review"
+            );
+        }
 
-        Review review=Review.builder()
+        if (reviewRepository.existsByRequest(
+                serviceRequest
+        )) {
+            throw new RuntimeException(
+                    "Review already submitted"
+            );
+        }
+
+        if (serviceRequest.getMechanic() == null) {
+            throw new RuntimeException(
+                    "No mechanic assigned"
+            );
+        }
+
+        if (serviceRequest.getStatus() !=
+                RequestStatus.COMPLETED) {
+            throw new RuntimeException(
+                    "Review only after completion"
+            );
+        }
+
+        User mechanic =
+                serviceRequest.getMechanic();
+
+        Review review = Review.builder()
                 .rating(request.getRating())
                 .comment(request.getComment())
                 .user(user)
@@ -54,17 +96,34 @@ public class ReviewServiceImpl  implements ReviewService {
 
         reviewRepository.save(review);
 
-        MechanicProfile profile=mechanicProfileRepository.findByUser(mechanic)
-                .orElseThrow(()-> new ResourceNotFoundException("mechanic profile not found"));
+        MechanicProfile profile =
+                mechanicProfileRepository
+                        .findByUser(mechanic)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Mechanic profile not found"
+                                ));
 
-        List<Review> reviews = reviewRepository.findByMechanic(mechanic);
+        List<Review> reviews =
+                reviewRepository.findByMechanic(
+                        mechanic
+                );
 
         double avg = reviews.stream()
                 .mapToInt(Review::getRating)
                 .average()
                 .orElse(0.0);
 
-        profile.setRating(BigDecimal.valueOf(avg));
+        profile.setRating(
+                BigDecimal.valueOf(avg)
+        );
+        if (request.getRating() == null ||
+                request.getRating() < 1 ||
+                request.getRating() > 5) {
+            throw new RuntimeException(
+                    "Rating must be between 1 and 5"
+            );
+        }
 
         mechanicProfileRepository.save(profile);
     }

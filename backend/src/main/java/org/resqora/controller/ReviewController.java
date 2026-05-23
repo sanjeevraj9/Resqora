@@ -22,15 +22,22 @@ public class ReviewController {
             @RequestBody CreateReviewRequest request,
             Authentication authentication
     ) {
+        System.out.println("REQUEST ID: " + request.getRequestId());
+        System.out.println("RATING: " + request.getRating());
+        System.out.println("USER: " + authentication.getName());
         reviewService.createReview(
                 request,
                 authentication.getName()
         );
 
-        return ResponseEntity.ok("Review submitted");
+        return ResponseEntity.ok(
+                "Review submitted successfully"
+        );
     }
+
     @GetMapping("/mechanic")
-    public ResponseEntity<List<ReviewResponse>> getMechanicReviews(
+    public ResponseEntity<List<ReviewResponse>>
+    getMechanicReviews(
             Authentication authentication
     ) {
         return ResponseEntity.ok(

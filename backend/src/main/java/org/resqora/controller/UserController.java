@@ -2,7 +2,9 @@ package org.resqora.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.resqora.dto.request.UpdateMechanicProfileRequest;
 import org.resqora.dto.request.UpdateUserProfileRequest;
+import org.resqora.dto.response.MechanicProfileResponse;
 import org.resqora.dto.response.UserProfileResponse;
 import org.resqora.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +18,15 @@ public class UserController {
 
     private final UserService userService;
 
+    // USER PROFILE
     @GetMapping("/profile")
     public ResponseEntity<UserProfileResponse> getProfile(
             Authentication authentication
     ) {
         return ResponseEntity.ok(
-                userService.getProfile(authentication.getName())
+                userService.getProfile(
+                        authentication.getName()
+                )
         );
     }
 
@@ -34,6 +39,33 @@ public class UserController {
                 userService.updateProfile(
                         request,
                         authentication.getName()
+                )
+        );
+    }
+
+    // MECHANIC PROFILE
+    @GetMapping("/mechanic/profile")
+    public ResponseEntity<MechanicProfileResponse>
+    getMechanicProfile(
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                userService.getMechanicProfile(
+                        authentication.getName()
+                )
+        );
+    }
+
+    @PutMapping("/mechanic/profile")
+    public ResponseEntity<MechanicProfileResponse>
+    updateMechanicProfile(
+            @RequestBody UpdateMechanicProfileRequest request,
+            Authentication authentication
+    ) {
+        return ResponseEntity.ok(
+                userService.updateMechanicProfile(
+                        authentication.getName(),
+                        request
                 )
         );
     }

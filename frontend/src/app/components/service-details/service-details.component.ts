@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UserHeaderComponent } from '../user-header/user-header.component';
+import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header.component';
 
 @Component({
   selector: 'app-service-details',
   standalone: true,
   imports: [
     CommonModule,
-    UserHeaderComponent
+    UserShellHeaderComponent
   ],
   templateUrl: './service-details.component.html',
   styleUrls: ['./service-details.component.scss']

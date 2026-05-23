@@ -38,6 +38,7 @@ public class MechanicProfile {
     private BigDecimal rating;
     private Integer experienceYears;
     private LocalDateTime createdAt;
+    private String specialization;
 
     @PrePersist
     public void prePersist(){

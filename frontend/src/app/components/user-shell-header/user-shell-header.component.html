@@ -1,0 +1,279 @@
+<header class="topbar">
+
+  <div
+    class="logo"
+    (click)="goHome()">
+
+    RESQ<span>ORA</span>
+
+  </div>
+
+  <div class="nav-right">
+
+    <div
+      class="location-pill"
+      (click)="openLocationModal()">
+
+      📍 {{ selectedCity || 'Detecting...' }}
+
+    </div>
+
+    <div class="support">
+      📞 24/7 Support
+    </div>
+
+    <div
+      class="account-btn"
+      (click)="openProfile()">
+
+      Account
+
+    </div>
+
+  </div>
+
+</header>
+
+<!-- LOCATION MODAL -->
+<div
+  class="profile-overlay"
+  *ngIf="showLocationModal">
+
+  <div class="profile-modal">
+
+    <button
+      class="close-btn"
+      (click)="closeLocationModal()">
+
+      ✕
+
+    </button>
+
+    <h2>Change Location</h2>
+
+<button
+  class="auto-location-btn"
+  (click)="detectCurrentLocation()">
+
+  📍 Use Current Location
+
+</button>
+
+    <label>Select State</label>
+
+    <select [(ngModel)]="selectedState">
+
+      <option value="">
+        Choose State
+      </option>
+
+      <option
+        *ngFor="let state of states"
+        [value]="state">
+
+        {{ state }}
+
+      </option>
+
+    </select>
+
+    <label>Select City</label>
+
+    <select [(ngModel)]="selectedCity">
+
+      <option value="">
+        Choose City
+      </option>
+
+      <option
+        *ngFor="let city of cities"
+        [value]="city">
+
+        {{ city }}
+
+      </option>
+
+    </select>
+
+    <button
+      class="save-btn"
+      (click)="saveLocation()">
+
+      Save Location
+
+    </button>
+
+  </div>
+
+</div>
+
+<!-- PROFILE MODAL -->
+<div
+  class="profile-overlay"
+  *ngIf="showProfileModal">
+
+  <div class="profile-modal large">
+
+    <button
+      class="close-btn"
+      (click)="closeProfile()">
+
+      ✕
+
+    </button>
+
+    <h2>My Account</h2>
+
+    <div
+      class="profile-info"
+      *ngIf="profile">
+
+      <div class="profile-avatar">
+        👤
+      </div>
+
+      <div class="profile-detail">
+
+        <!-- VIEW MODE -->
+        <div *ngIf="!editMode">
+
+          <p>
+            <strong>Name:</strong>
+            {{ profile.name }}
+          </p>
+
+          <p>
+            <strong>Email:</strong>
+            {{ profile.email }}
+          </p>
+
+          <p>
+            <strong>Phone:</strong>
+            {{ profile.phone }}
+          </p>
+
+          <p>
+            <strong>Emergency Contact:</strong>
+            {{ profile.emergencyContactName || 'Not Added' }}
+          </p>
+
+          <p>
+            <strong>Emergency Phone:</strong>
+            {{ profile.emergencyContactPhone || 'Not Added' }}
+          </p>
+
+          <button
+            class="edit-btn"
+            (click)="enableEdit()">
+
+            Edit Profile
+
+          </button>
+
+        </div>
+
+        <!-- EDIT MODE -->
+        <div *ngIf="editMode">
+
+          <label>Name</label>
+          <input [(ngModel)]="editForm.name" />
+
+          <label>Phone</label>
+          <input [(ngModel)]="editForm.phone" />
+
+          <label>Emergency Contact Name</label>
+          <input [(ngModel)]="editForm.emergencyContactName" />
+
+          <label>Emergency Contact Phone</label>
+          <input [(ngModel)]="editForm.emergencyContactPhone" />
+
+          <div class="edit-actions">
+
+            <button
+              class="save-btn"
+              (click)="saveProfile()">
+
+              Save
+
+            </button>
+
+            <button
+              class="cancel-edit-btn"
+              (click)="cancelEdit()">
+
+              Cancel
+
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="profile-actions">
+
+      <button
+        class="history-btn"
+        (click)="toggleHistory()">
+
+        {{
+          showHistory
+            ? 'Hide Booking History'
+            : 'View Booking History'
+        }}
+
+      </button>
+
+      <button
+        class="logout-btn"
+        (click)="logout()">
+
+        Logout
+
+      </button>
+
+    </div>
+
+    <!-- HISTORY -->
+    <div
+      class="history-section"
+      *ngIf="showHistory">
+
+      <div
+        class="history-card"
+        *ngFor="let item of history">
+
+        <div>
+          <h4>{{ item.issueType }}</h4>
+
+          <p>
+            {{ formatDate(item.createdAt) }}
+          </p>
+
+          <span
+            class="status-badge"
+            [ngClass]="getStatusClass(item.status)">
+
+            {{ item.status }}
+
+          </span>
+        </div>
+
+        <button
+          class="rebook-btn"
+          (click)="rebook(item)">
+
+          Rebook
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

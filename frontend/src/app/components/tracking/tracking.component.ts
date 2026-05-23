@@ -1,89 +1,66 @@
 import {
   Component,
-  OnInit,
-  OnDestroy
+  OnInit
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
-import * as L from 'leaflet';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { WebsocketService } from '../services/websocket.service';
+import * as L from 'leaflet';
+
 import { RequestService } from '../services/request.service';
-import { UserHeaderComponent } from '../user-header/user-header.component';
+
+import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header.component';
 
 @Component({
   selector: 'app-tracking',
   standalone: true,
-  imports: [CommonModule, UserHeaderComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    UserShellHeaderComponent
+  ],
   templateUrl: './tracking.component.html',
   styleUrls: ['./tracking.component.scss']
 })
 export class TrackingComponent
-  implements OnInit, OnDestroy {
+  implements OnInit {
+
+  request: any = null;
 
   currentStatus = 'SEARCHING';
-  mechanicName = '';
   mechanicAssigned = false;
-
-  activeRequest: any = null;
+  mechanicName = '';
 
   timeline = [
-    'SEARCHING',
+    'REQUESTED',
     'ACCEPTED',
     'ON_THE_WAY',
-    'ARRIVED',
     'IN_PROGRESS',
     'COMPLETED'
   ];
 
   map: any;
+  userMarker: any;
   mechanicMarker: any;
 
+  showReviewModal = false;
+  selectedRating = 0;
+  reviewComment = '';
+
   constructor(
-    private websocketService: WebsocketService,
     private requestService: RequestService,
+    
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    const saved =
-      localStorage.getItem('activeRequest');
-
-    if (saved) {
-      this.activeRequest = JSON.parse(saved);
-      this.loadCurrentRequestStatus();
-    }
-
-    setTimeout(() => {
-      this.initMap();
-    }, 500);
-
-    this.connectSockets();
-  }
-
-  loadCurrentRequestStatus() {
-    if (!this.activeRequest) return;
-
-    this.requestService
-      .getRequestById(this.activeRequest.id)
-      .subscribe({
-        next: (res) => {
-          this.currentStatus = res.status;
-
-          if (res.status !== 'REQUESTED') {
-            this.mechanicAssigned = true;
-          }
-        }
-      });
+    this.initMap();
+    this.loadTracking();
   }
 
   initMap() {
-    const mapContainer =
-      document.getElementById('liveMap');
-
-    if (!mapContainer) return;
-
     this.map = L.map('liveMap').setView(
       [22.7196, 75.8577],
       13
@@ -92,97 +69,185 @@ export class TrackingComponent
     L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
-        attribution: 'OpenStreetMap'
+        attribution:
+          '© OpenStreetMap'
       }
     ).addTo(this.map);
   }
 
-  connectSockets() {
-    this.websocketService.connect(
-      '/topic/request-accepted',
-      (data: any) => {
-        this.currentStatus = 'ACCEPTED';
-        this.mechanicAssigned = true;
-        this.mechanicName =
-          data.mechanicName || 'Mechanic';
-      }
-    );
+  loadTracking() {
+    const activeRequest =
+      localStorage.getItem('activeRequest');
 
-    this.websocketService.connect(
-      '/topic/request-status',
-      (data: any) => {
-        this.currentStatus = data.status;
+    if (!activeRequest) {
+      this.router.navigate([
+        '/user-home'
+      ]);
+      return;
+    }
 
-        if (data.status === 'COMPLETED') {
-          alert('Service completed successfully');
-          localStorage.removeItem('activeRequest');
-        }
-      }
-    );
-
-    this.websocketService.connect(
-      '/topic/live-location',
-      (data: any) => {
-        this.updateMechanicLocation(
-          data.latitude,
-          data.longitude
-        );
-      }
-    );
-  }
-
-  cancelBooking() {
-    if (!this.activeRequest) return;
-
-    const confirmCancel = confirm(
-      'Are you sure you want to cancel this request?'
-    );
-
-    if (!confirmCancel) return;
+    const request =
+      JSON.parse(activeRequest);
 
     this.requestService
-      .cancelRequest(this.activeRequest.id)
+      .getRequestById(request.id)
       .subscribe({
-        next: () => {
-          alert('Request cancelled');
-          localStorage.removeItem('activeRequest');
-          this.router.navigate(['/user-home']);
+        next: (res: any) => {
+          this.request = res;
+
+          this.currentStatus =
+            res.status;
+
+          if (
+            res.status !== 'REQUESTED'
+          ) {
+            this.mechanicAssigned =
+              true;
+
+            this.mechanicName =
+              res.mechanicName ||
+              'Mechanic Assigned';
+          }
+
+          this.updateMapMarkers(res);
+
+          if (
+            res.status ===
+            'COMPLETED'
+          ) {
+            this.showReviewModal =
+              true;
+          }
+
+          setTimeout(() => {
+            this.loadTracking();
+          }, 5000);
         },
-        error: (err) => {
-          console.log(err);
-          alert('Cancel failed');
+        error: () => {
+          console.log(
+            'Tracking fetch failed'
+          );
         }
       });
   }
 
-  updateMechanicLocation(
-    lat: number,
-    lng: number
-  ) {
-    if (!this.map) return;
+  updateMapMarkers(res: any) {
+    if (
+      res.latitude &&
+      res.longitude
+    ) {
+      if (this.userMarker) {
+        this.map.removeLayer(
+          this.userMarker
+        );
+      }
 
-    if (!this.mechanicMarker) {
-      this.mechanicMarker = L.marker([lat, lng])
-        .addTo(this.map);
-    } else {
-      this.mechanicMarker.setLatLng([lat, lng]);
+      this.userMarker = L.marker([
+        res.latitude,
+        res.longitude
+      ]).addTo(this.map);
+
+      this.map.setView(
+        [
+          res.latitude,
+          res.longitude
+        ],
+        13
+      );
     }
-
-    this.map.panTo([lat, lng]);
   }
 
-  isDone(step: string): boolean {
+  isDone(step: string) {
     return (
       this.timeline.indexOf(step) <=
-      this.timeline.indexOf(this.currentStatus)
+      this.timeline.indexOf(
+        this.currentStatus
+      )
     );
   }
 
-  ngOnDestroy(): void {
-    this.websocketService.disconnect();
+  cancelBooking() {
+    if (!this.request) return;
 
-    if (this.map) {
-      this.map.remove();
-    }
+    const confirmCancel =
+      confirm(
+        'Cancel this request?'
+      );
+
+    if (!confirmCancel) return;
+
+    this.requestService
+      .cancelRequest(
+        this.request.id
+      )
+      .subscribe({
+        next: () => {
+          alert(
+            'Request cancelled'
+          );
+
+          localStorage.removeItem(
+            'activeRequest'
+          );
+
+          this.router.navigate([
+            '/user-home'
+          ]);
+        },
+        error: () => {
+          alert(
+            'Cancel failed'
+          );
+        }
+      });
   }
+
+  setRating(star: number) {
+    this.selectedRating = star;
+  }
+
+  submitReview() {
+    if (
+      !this.selectedRating ||
+      !this.request
+    ) {
+      alert(
+        'Please select rating'
+      );
+      return;
+    }
+
+    const reviewPayload = {
+      requestId: this.request.id,
+      rating: this.selectedRating,
+      comment: this.reviewComment
+    };
+
+  //   this.reviewService
+  //     .submitReview(reviewPayload)
+  //     .subscribe({
+  //       next: () => {
+  //         alert(
+  //           'Review submitted'
+  //         );
+
+  //         this.showReviewModal =
+  //           false;
+
+  //         localStorage.removeItem(
+  //           'activeRequest'
+  //         );
+
+  //         this.router.navigate([
+  //           '/user-home'
+  //         ]);
+  //       },
+  //       error: () => {
+  //         alert(
+  //           'Review failed'
+  //         );
+  //       }
+  //     });
+   }
+  
 }

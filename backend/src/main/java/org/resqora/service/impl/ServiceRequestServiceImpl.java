@@ -8,6 +8,7 @@ import org.resqora.entity.MechanicProfile;
 import org.resqora.entity.ServiceRequest;
 import org.resqora.entity.User;
 import org.resqora.entity.Vehicle;
+import org.resqora.enums.PaymentStatus;
 import org.resqora.enums.RequestStatus;
 import org.resqora.enums.Role;
 import org.resqora.exception.BadRequestException;
@@ -61,6 +62,8 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
                 .estimatedPrice(request.getEstimatedPrice())
+                .paymentMethod(request.getPaymentMethod())
+                .paymentStatus(request.getPaymentStatus())
                 .status(RequestStatus.REQUESTED)
                 .build();
 
@@ -391,6 +394,8 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
                                 mechanic,
                                 activeStatuses
                         );
+        System.out.println("AUTH EMAIL: " + email);
+        System.out.println("REQUEST COUNT: " + requests.size());
 
         if (requests.isEmpty()) {
             return null;
@@ -439,6 +444,8 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
                 .longitude(request.getLongitude())
                 .status(request.getStatus())
                 .estimatedPrice(request.getEstimatedPrice())
+                .paymentMethod(request.getPaymentMethod())
+                .paymentStatus(request.getPaymentStatus())
                 .createdAt(request.getCreatedAt())
 
                 .vehicleBrand(
@@ -458,7 +465,30 @@ public class ServiceRequestServiceImpl implements ServiceRequestService {
                                 ? request.getMechanic().getName()
                                 : null
                 )
-
+                .customerName(
+                        request.getUser()!=null
+                                ? request.getUser().getName():null
+                )
                 .build();
+    }
+    @Override
+    public ServiceRequestResponse markCashCollected(
+            Long requestId
+    ) {
+        ServiceRequest request =
+                serviceRequestRepository
+                        .findById(requestId)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Request not found"
+                                ));
+
+        request.setPaymentStatus(
+                PaymentStatus.PAID
+        );
+
+        serviceRequestRepository.save(request);
+
+        return map(request);
     }
 }

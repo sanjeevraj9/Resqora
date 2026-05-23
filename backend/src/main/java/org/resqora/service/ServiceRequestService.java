@@ -31,4 +31,5 @@ public interface ServiceRequestService {
     ServiceRequestResponse getMechanicActiveRequest(String email);
 
     MechanicStatsResponse getMechanicStats(String email);
+    ServiceRequestResponse markCashCollected(Long requestId);
 }

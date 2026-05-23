@@ -1,7 +1,6 @@
-<app-user-header></app-user-header>
+<app-user-shell-header></app-user-shell-header>
 
 <div class="tracking-page">
-  
 
   <div class="tracking-card">
 
@@ -27,6 +26,23 @@
 
     </div>
 
+    <!-- PAYMENT STATUS -->
+    <div
+      class="payment-badge paid"
+      *ngIf="request?.paymentStatus === 'PAID'">
+
+      💳 Payment Completed
+
+    </div>
+
+    <div
+      class="payment-badge cod"
+      *ngIf="request?.paymentStatus === 'CASH_PENDING'">
+
+      💵 Cash On Delivery
+
+    </div>
+
     <div class="timeline">
 
       <div
@@ -38,26 +54,78 @@
 
         <span>
           {{
-            step === 'ON_THE_WAY' ? 'On The Way' :
-            step === 'IN_PROGRESS' ? 'Repair In Progress' :
-            step.replace('_', ' ')
+            step === 'ON_THE_WAY'
+              ? 'On The Way'
+              : step === 'IN_PROGRESS'
+              ? 'Repair In Progress'
+              : step.replace('_', ' ')
           }}
         </span>
 
       </div>
 
     </div>
+
     <button
-  class="cancel-btn"
-  *ngIf="currentStatus !== 'COMPLETED'"
-  (click)="cancelBooking()">
+      class="cancel-btn"
+      *ngIf="currentStatus !== 'COMPLETED'"
+      (click)="cancelBooking()">
 
-  Cancel Request
+      Cancel Request
 
-</button>
+    </button>
 
-    <div class="live-map" id="liveMap">
+    <div
+      class="live-map"
+      id="liveMap">
+
       <!-- Leaflet map -->
+
+    </div>
+
+  </div>
+
+  <!-- REVIEW MODAL -->
+  <div
+    class="review-overlay"
+    *ngIf="showReviewModal">
+
+    <div class="review-modal">
+
+      <h2>
+        Service Completed 🎉
+      </h2>
+
+      <p>
+        Rate your mechanic
+      </p>
+
+      <div class="stars">
+
+        <span
+          *ngFor="let star of [1,2,3,4,5]"
+          (click)="setRating(star)"
+          [class.active]="star <= selectedRating">
+
+          ⭐
+
+        </span>
+
+      </div>
+
+      <textarea
+        [(ngModel)]="reviewComment"
+        placeholder="Write your feedback...">
+      </textarea>
+
+      <button
+        class="submit-review-btn"
+        (click)="submitReview()">
+
+        Submit Review
+
+      </button>
+
     </div>
 
   </div>

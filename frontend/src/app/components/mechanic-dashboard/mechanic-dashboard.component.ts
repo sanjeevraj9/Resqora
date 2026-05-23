@@ -5,13 +5,20 @@ import {
 } from '@angular/core';
 
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
 import { RequestService } from '../services/request.service';
 import { WebsocketService } from '../services/websocket.service';
+import { MechanicShellHeaderComponent } from '../mechanic-shell-header/mechanic-shell-header.component';
 
 @Component({
   selector: 'app-mechanic-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MechanicShellHeaderComponent
+  ],
   templateUrl: './mechanic-dashboard.component.html',
   styleUrls: ['./mechanic-dashboard.component.scss']
 })
@@ -20,8 +27,7 @@ export class MechanicDashboardComponent
 
   incomingRequest: any = null;
   activeRequest: any = null;
-
-  availability = true;
+  jobHistory: any[] = [];
 
   todayEarnings = 0;
   completedJobs = 0;
@@ -44,19 +50,19 @@ export class MechanicDashboardComponent
     this.listenForRequests();
     this.loadActiveRequest();
     this.loadStats();
+    this.loadHistory();
   }
 
   loadActiveRequest() {
     this.requestService
       .getMechanicActiveRequest()
       .subscribe({
-        next: (res) => {
+        next: (res: any) => {
           if (res) {
             this.activeRequest = res;
             this.startLiveLocationSharing();
           }
-        },
-        error: () => {}
+        }
       });
   }
 
@@ -64,14 +70,23 @@ export class MechanicDashboardComponent
     this.requestService
       .getMechanicStats()
       .subscribe({
-        next: (res) => {
+        next: (res: any) => {
           this.completedJobs =
             res.completedJobs || 0;
 
           this.todayEarnings =
             res.totalEarnings || 0;
-        },
-        error: () => {}
+        }
+      });
+  }
+
+  loadHistory() {
+    this.requestService
+      .getMechanicHistory()
+      .subscribe({
+        next: (res: any) => {
+          this.jobHistory = res || [];
+        }
       });
   }
 
@@ -79,15 +94,9 @@ export class MechanicDashboardComponent
     this.websocketService.connect(
       '/topic/mechanic-requests',
       (data: any) => {
-        if (!this.availability) return;
-
         this.incomingRequest = data;
       }
     );
-  }
-
-  toggleAvailability() {
-    this.availability = !this.availability;
   }
 
   callCustomer() {
@@ -123,7 +132,7 @@ export class MechanicDashboardComponent
     this.requestService
       .acceptRequest(this.incomingRequest.requestId)
       .subscribe({
-        next: (res) => {
+        next: (res: any) => {
           this.activeRequest = {
             ...res,
             customerName:
@@ -137,11 +146,7 @@ export class MechanicDashboardComponent
           };
 
           this.incomingRequest = null;
-
           this.startLiveLocationSharing();
-        },
-        error: () => {
-          alert('Accept failed');
         }
       });
   }
@@ -151,18 +156,25 @@ export class MechanicDashboardComponent
 
     this.requestService
       .rejectRequest(this.incomingRequest.requestId)
-      .subscribe({
-        next: () => {
-          this.incomingRequest = null;
-        },
-        error: () => {
-          alert('Reject failed');
-        }
+      .subscribe(() => {
+        this.incomingRequest = null;
       });
   }
 
   updateStatus(status: string) {
     if (!this.activeRequest) return;
+
+    // COD validation
+    if (
+      status === 'COMPLETED' &&
+      this.activeRequest.paymentStatus ===
+        'CASH_PENDING'
+    ) {
+      alert(
+        'Please collect cash before completing service'
+      );
+      return;
+    }
 
     this.requestService
       .updateStatus(
@@ -170,9 +182,11 @@ export class MechanicDashboardComponent
         status
       )
       .subscribe({
-        next: (res) => {
+        next: (res: any) => {
           this.activeRequest = {
             ...res,
+            customerName:
+              this.activeRequest.customerName,
             customerPhone:
               this.activeRequest.customerPhone,
             latitude:
@@ -182,48 +196,75 @@ export class MechanicDashboardComponent
           };
 
           if (status === 'COMPLETED') {
-            this.todayEarnings +=
-              Number(this.activeRequest.estimatedPrice || 0);
+            clearInterval(
+              this.locationInterval
+            );
 
-            this.completedJobs++;
-
-            clearInterval(this.locationInterval);
+            this.loadStats();
+            this.loadHistory();
 
             setTimeout(() => {
               this.activeRequest = null;
             }, 1500);
           }
+        }
+      });
+  }
+
+  collectCash(request: any) {
+    this.requestService
+      .markCashCollected(request.id)
+      .subscribe({
+        next: (res: any) => {
+          this.activeRequest.paymentStatus =
+            res.paymentStatus;
+
+          alert(
+            'Cash marked as collected'
+          );
         },
         error: () => {
-          alert('Status update failed');
+          alert(
+            'Cash collection update failed'
+          );
         }
       });
   }
 
   startLiveLocationSharing() {
-    this.locationInterval = setInterval(() => {
-
-      if (!navigator.geolocation || !this.activeRequest) {
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          this.requestService
-            .updateLiveLocation(
-              this.activeRequest.id,
-              position.coords.latitude,
-              position.coords.longitude
-            )
-            .subscribe();
+    this.locationInterval =
+      setInterval(() => {
+        if (
+          !navigator.geolocation ||
+          !this.activeRequest
+        ) {
+          return;
         }
-      );
 
-    }, 5000);
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            this.requestService
+              .updateLiveLocation(
+                this.activeRequest.id,
+                position.coords.latitude,
+                position.coords.longitude
+              )
+              .subscribe();
+          }
+        );
+      }, 5000);
+  }
+
+  formatDate(date: string) {
+    return new Date(date)
+      .toLocaleString();
   }
 
   ngOnDestroy(): void {
-    clearInterval(this.locationInterval);
+    clearInterval(
+      this.locationInterval
+    );
+
     this.websocketService.disconnect();
   }
 }

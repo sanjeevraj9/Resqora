@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 
 import { RequestService } from '../services/request.service';
 import { VehicleService } from '../services/vehicle.service';
-import { UserHeaderComponent } from '../user-header/user-header.component';
+import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header.component';
 
 @Component({
   selector: 'app-issue-details',
@@ -13,7 +13,7 @@ import { UserHeaderComponent } from '../user-header/user-header.component';
   imports: [
     CommonModule,
     FormsModule,
-    UserHeaderComponent
+    UserShellHeaderComponent
   ],
   templateUrl: './issue-details.component.html',
   styleUrls: ['./issue-details.component.scss']
@@ -124,86 +124,70 @@ export class IssueDetailsComponent implements OnInit {
 
     return 'OTHER';
   }
+continueBooking() {
 
-  continueBooking() {
-
-    if (!this.selectedBrand) {
-      alert('Please select brand');
-      return;
-    }
-
-    if (!this.selectedModel) {
-      alert('Please select model');
-      return;
-    }
-
-    if (!this.locationFetched) {
-      alert('Location fetching...');
-      return;
-    }
-
-    const vehiclePayload = {
-      vehicleType:
-        this.selectedVehicleType === 'Bike'
-          ? 'BIKE'
-          : 'CAR',
-
-      brand: this.selectedBrand,
-      model: this.selectedModel,
-      registrationNumber:
-        'TEMP-' + Date.now(),
-      fuelType: 'PETROL'
-    };
-
-    this.vehicleService
-      .createVehicle(vehiclePayload)
-      .subscribe({
-
-        next: (savedVehicle) => {
-
-          const requestPayload = {
-            vehicleId: savedVehicle.id,
-            issueType: this.mapIssueType(),
-            description:
-              this.problemDescription ||
-              this.selectedIssue,
-
-            latitude: this.latitude,
-            longitude: this.longitude,
-
-            estimatedPrice: Number(
-              this.selectedService.price.replace('₹', '')
-            )
-          };
-
-          this.requestService
-            .createRequest(requestPayload)
-            .subscribe({
-
-              next: (res) => {
-
-                localStorage.setItem(
-                  'activeRequest',
-                  JSON.stringify(res)
-                );
-
-                alert(
-                  'Request created successfully. Searching nearest mechanic...'
-                );
-
-                this.router.navigate(['/tracking']);
-              },
-
-              error: () => {
-                alert('Request creation failed');
-              }
-            });
-
-        },
-
-        error: () => {
-          alert('Vehicle creation failed');
-        }
-      });
+  if (!this.selectedBrand) {
+    alert('Please select brand');
+    return;
   }
+
+  if (!this.selectedModel) {
+    alert('Please select model');
+    return;
+  }
+
+  if (!this.locationFetched) {
+    alert('Location fetching...');
+    return;
+  }
+
+  const vehiclePayload = {
+    vehicleType:
+      this.selectedVehicleType === 'Bike'
+        ? 'BIKE'
+        : 'CAR',
+
+    brand: this.selectedBrand,
+    model: this.selectedModel,
+    registrationNumber:
+      'TEMP-' + Date.now(),
+    fuelType: 'PETROL'
+  };
+
+  this.vehicleService
+    .createVehicle(vehiclePayload)
+    .subscribe({
+
+      next: (savedVehicle) => {
+
+        const requestPayload = {
+          vehicleId: savedVehicle.id,
+          issueType: this.mapIssueType(),
+          description:
+            this.problemDescription ||
+            this.selectedIssue,
+
+          latitude: this.latitude,
+          longitude: this.longitude,
+
+          estimatedPrice: Number(
+            this.selectedService.price.replace('₹', '')
+          )
+        };
+
+        localStorage.setItem(
+          'pendingBooking',
+          JSON.stringify(requestPayload)
+        );
+
+        this.router.navigate([
+          '/payment'
+        ]);
+      },
+
+      error: () => {
+        alert('Vehicle creation failed');
+      }
+    });
+}
 }

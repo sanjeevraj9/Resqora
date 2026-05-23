@@ -1,0 +1,214 @@
+<header class="topbar">
+
+  <div
+    class="logo"
+    (click)="goDashboard()">
+
+    RESQ<span>ORA</span>
+
+  </div>
+
+  <div class="nav-right">
+<div
+  class="availability-pill"
+  [class.online]="profile?.availability"
+  [class.offline]="!profile?.availability"
+  (click)="toggleAvailability()">
+
+  {{
+    profile?.availability
+      ? '🟢 Available'
+      : '🔴 Offline'
+  }}
+
+</div>
+
+    <div
+      class="location-pill"
+      (click)="openLocationModal()">
+
+      📍 {{ selectedCity }}
+
+    </div>
+
+    <div
+      class="account-btn"
+      (click)="openProfile()">
+
+      Account
+
+    </div>
+
+  </div>
+
+</header>
+
+<!-- LOCATION MODAL -->
+<div
+  class="profile-overlay"
+  *ngIf="showLocationModal">
+
+  <div class="profile-modal">
+
+    <button
+      class="close-btn"
+      (click)="closeLocationModal()">
+
+      ✕
+
+    </button>
+
+    <h2>Change Work Location</h2>
+    <button
+  class="auto-location-btn"
+  (click)="detectCurrentLocation()">
+
+  📍 Use Current Location
+
+</button>
+
+    <label>Select State</label>
+
+    <select [(ngModel)]="selectedState">
+
+      <option value="">
+        Choose State
+      </option>
+
+      <option
+        *ngFor="let state of states"
+        [value]="state">
+
+        {{ state }}
+
+      </option>
+
+    </select>
+
+    <label>Select City</label>
+
+    <select [(ngModel)]="selectedCity">
+
+      <option value="">
+        Choose City
+      </option>
+
+      <option
+        *ngFor="let city of cities"
+        [value]="city">
+
+        {{ city }}
+
+      </option>
+
+    </select>
+
+    <button
+      class="save-btn"
+      (click)="saveLocation()">
+
+      Save Changes
+
+    </button>
+
+  </div>
+
+</div>
+
+<!-- PROFILE MODAL -->
+<div
+  class="profile-overlay"
+  *ngIf="showProfileModal">
+
+  <div class="profile-modal large">
+
+    <button
+      class="close-btn"
+      (click)="closeProfile()">
+
+      ✕
+
+    </button>
+
+    <h2>Mechanic Account</h2>
+
+    <div
+      class="profile-info"
+      *ngIf="profile">
+
+      <div class="profile-avatar">
+        🔧
+      </div>
+
+      <div class="profile-detail">
+
+        <p>
+          <strong>Name:</strong>
+          {{ profile.name }}
+        </p>
+
+        <p>
+          <strong>Email:</strong>
+          {{ profile.email }}
+        </p>
+
+        <p>
+          <strong>Phone:</strong>
+          {{ profile.phone }}
+        </p>
+
+        <p>
+          <strong>Garage:</strong>
+          {{ profile.garageName || 'Not Added' }}
+        </p>
+
+        <p>
+          <strong>Experience:</strong>
+          {{ profile.experience || 0 }} years
+        </p>
+
+        <p>
+          <strong>Specialization:</strong>
+          {{ profile.specialization || 'General Repair' }}
+        </p>
+
+        <p>
+          <strong>Rating:</strong>
+          ⭐ {{ profile.rating || 0 }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <div class="profile-actions">
+
+      <button
+        class="history-btn"
+        (click)="goHistory()">
+
+        Job History
+
+      </button>
+
+      <button
+        class="reviews-btn"
+        (click)="goReviews()">
+
+        Reviews
+
+      </button>
+
+      <button
+        class="logout-btn"
+        (click)="logout()">
+
+        Logout
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>

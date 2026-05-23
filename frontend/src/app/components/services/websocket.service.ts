@@ -12,8 +12,15 @@ export class WebsocketService {
   private initConnection() {
     if (this.stompClient) return;
 
+    const token =
+      localStorage.getItem('token');
+
     this.stompClient = new Client({
       brokerURL: 'ws://localhost:8082/ws',
+
+      connectHeaders: {
+        Authorization: `Bearer ${token}`
+      },
 
       reconnectDelay: 5000,
 
@@ -23,11 +30,11 @@ export class WebsocketService {
       },
 
       onStompError: (frame) => {
-        console.error(frame);
+        console.error('STOMP ERROR:', frame);
       },
 
       onWebSocketError: (err) => {
-        console.error(err);
+        console.error('WS ERROR:', err);
       }
     });
 
@@ -40,19 +47,28 @@ export class WebsocketService {
   ) {
     this.initConnection();
 
-    const waitForConnection = setInterval(() => {
-      if (this.connected && this.stompClient) {
+    const waitForConnection =
+      setInterval(() => {
 
-        this.stompClient.subscribe(
-          topic,
-          (message) => {
-            callback(JSON.parse(message.body));
-          }
-        );
+        if (
+          this.connected &&
+          this.stompClient
+        ) {
+          this.stompClient.subscribe(
+            topic,
+            (message) => {
+              callback(
+                JSON.parse(message.body)
+              );
+            }
+          );
 
-        clearInterval(waitForConnection);
-      }
-    }, 300);
+          clearInterval(
+            waitForConnection
+          );
+        }
+
+      }, 300);
   }
 
   disconnect() {
