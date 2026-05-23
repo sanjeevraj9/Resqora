@@ -11,13 +11,13 @@ import { Observable } from 'rxjs';
 export class AuthService {
 
   private authUrl =
-    'http://localhost:8082/api/auth';
+    'https://resqora-api.onrender.com/api/auth';
 
   private userUrl =
-    'http://localhost:8082/api/users';
+    'https://resqora-api.onrender.com/api/users';
 
   private mechanicUrl =
-    'http://localhost:8082/api/mechanics';
+    'https://resqora-api.onrender.com/api/mechanics';
 
   constructor(
     private http: HttpClient
@@ -91,7 +91,7 @@ export class AuthService {
     localStorage.getItem('token');
 
   return this.http.put(
-    'http://localhost:8082/api/mechanics/availability',
+    'https://resqora-api.onrender.com/api/mechanics/availability',
     {
       availability: available
     },

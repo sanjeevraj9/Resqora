@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
 })
 export class RequestService {
 
-  private apiUrl = 'http://localhost:8082/api/requests';
+  private apiUrl = 'https://resqora-api.onrender.com/api/requests';
 
   constructor(private http: HttpClient) {}
 
@@ -125,7 +125,7 @@ getMechanicStats() {
 }
 getMechanicProfile() {
   return this.http.get<any>(
-    'http://localhost:8082/api/mechanics/profile',
+    'https://resqora-api.onrender.com/api/mechanics/profile',
     {
       headers: this.getHeaders()
     }
@@ -136,7 +136,7 @@ updateMechanicAvailability(
   availability: boolean
 ) {
   return this.http.put<any>(
-    'http://localhost:8082/api/mechanics/availability',
+    'https://resqora-api.onrender.com/api/mechanics/availability',
     {
       availability
     },
@@ -148,7 +148,7 @@ updateMechanicAvailability(
 
 getMechanicHistory(): Observable<any[]> {
   return this.http.get<any[]>(
-    'http://localhost:8082/api/mechanics/history',
+    'https://resqora-api.onrender.com/api/mechanics/history',
     {
       headers: this.getHeaders()
     }
@@ -156,7 +156,7 @@ getMechanicHistory(): Observable<any[]> {
 }
 submitReview(data: any) {
   return this.http.post(
-    'http://localhost:8082/api/reviews',
+    'https://resqora-api.onrender.com/api/reviews',
     data,
     {
       headers: this.getHeaders()
@@ -166,7 +166,7 @@ submitReview(data: any) {
 
 getMechanicReviews() {
   return this.http.get<any[]>(
-    'http://localhost:8082/api/reviews/mechanic',
+    'https://resqora-api.onrender.com/api/reviews/mechanic',
     {
       headers: this.getHeaders()
     }

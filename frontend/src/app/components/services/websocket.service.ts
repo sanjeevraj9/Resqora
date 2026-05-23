@@ -16,7 +16,7 @@ export class WebsocketService {
       localStorage.getItem('token');
 
     this.stompClient = new Client({
-      brokerURL: 'ws://localhost:8082/ws',
+      brokerURL: 'ws://resqora-api.onrender.com/ws',
 
       connectHeaders: {
         Authorization: `Bearer ${token}`

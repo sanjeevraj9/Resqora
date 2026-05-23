@@ -9,7 +9,7 @@ import {
 })
 export class VehicleService {
 
-  private apiUrl = 'http://localhost:8082/api/vehicles';
+  private apiUrl = 'https://resqora-api.onrender.com/api/vehicles';
 
   constructor(private http: HttpClient) {}
 
