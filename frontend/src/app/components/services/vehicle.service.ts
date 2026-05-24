@@ -39,4 +39,12 @@ export class VehicleService {
       }
     );
   }
+  getUserVehicles() {
+  return this.http.get<any[]>(
+    `${this.apiUrl}/my-vehicles`,
+    {
+      headers: this.getHeaders()
+    }
+  );
+}
 }

@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { RequestService } from '../services/request.service';
 import { AuthService } from '../services/auth.service';
 import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header.component';
+import { CrashDetectionService } from '../services/crash-detection.service';
 
 @Component({
   selector: 'app-user-home',
@@ -82,12 +83,14 @@ export class UserHomeComponent
   constructor(
     private router: Router,
     private requestService: RequestService,
-    private authService: AuthService
+    private authService: AuthService,
+    private crashDetectionService: CrashDetectionService
   ) {}
 
   ngOnInit(): void {
     const saved =
       localStorage.getItem('activeRequest');
+      this.crashDetectionService.startMonitoring();
 
     if (saved) {
       this.activeRequest =

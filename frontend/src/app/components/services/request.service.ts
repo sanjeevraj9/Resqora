@@ -183,4 +183,16 @@ markCashCollected(
     }
   );
 }
+triggerEmergency(
+  lat: number,
+  lng: number
+) {
+  return this.http.post(
+    `${this.apiUrl}/emergency/trigger?latitude=${lat}&longitude=${lng}`,
+    {},
+    {
+      headers: this.getHeaders()
+    }
+  );
+}
 }
