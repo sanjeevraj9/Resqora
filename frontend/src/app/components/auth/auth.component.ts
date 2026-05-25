@@ -141,10 +141,14 @@ export class AuthComponent implements OnInit {
       phone: this.registerForm.phone,
       password: this.registerForm.password
     }).subscribe({
-      next: (response) => {
+      next: () => {
         this.loading = false;
-        this.authService.saveAuth(response);
-        this.router.navigate(['/user-home']);
+
+        alert(
+          'Registration successful! Please verify your email before login.'
+        );
+
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.loading = false;
@@ -170,10 +174,14 @@ export class AuthComponent implements OnInit {
       latitude: this.mechanicLatitude,
       longitude: this.mechanicLongitude
     }).subscribe({
-      next: (response) => {
+      next: () => {
         this.loading = false;
-        this.authService.saveAuth(response);
-        this.router.navigate(['/mechanic-dashboard']);
+
+        alert(
+          'Registration successful! Please verify your email before login.'
+        );
+
+        this.router.navigate(['/login']);
       },
       error: (err) => {
         this.loading = false;
@@ -182,5 +190,4 @@ export class AuthComponent implements OnInit {
       }
     });
   }
-  
 }

@@ -85,26 +85,28 @@ export class AuthService {
   }
 
   updateAvailability(
-  available: boolean
-): Observable<any> {
-  const token =
-    localStorage.getItem('token');
+    available: boolean
+  ): Observable<any> {
+    const token =
+      localStorage.getItem('token');
 
-  return this.http.put(
-    'https://resqora-api.onrender.com/api/mechanics/availability',
-    {
-      availability: available
-    },
-    {
-      headers: new HttpHeaders({
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      })
-    }
-  );
-}
+    return this.http.put(
+      `${this.mechanicUrl}/availability`,
+      {
+        availability: available
+      },
+      {
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        })
+      }
+    );
+  }
 
   saveAuth(response: any) {
+    if (!response?.token) return;
+
     localStorage.setItem(
       'token',
       response.token
@@ -119,6 +121,10 @@ export class AuthService {
       'role',
       response.role
     );
+  }
+
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
   }
 
   logout() {
