@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -7,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 export class EmergencyService {
 
   private baseUrl =
-    'https://resqora-api.onrender.com/api/emergency';
+    `${environment.apiUrl}/api/emergency`;
 
   constructor(
     private http: HttpClient

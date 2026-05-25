@@ -4,13 +4,21 @@ import {
   HttpHeaders
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class RequestService {
 
-  private apiUrl = 'https://resqora-api.onrender.com/api/requests';
+  private apiUrl =
+    `${environment.apiUrl}/api/requests`;
+
+  private mechanicUrl =
+    `${environment.apiUrl}/api/mechanics`;
+
+  private reviewUrl =
+    `${environment.apiUrl}/api/reviews`;
 
   constructor(private http: HttpClient) {}
 
@@ -81,118 +89,113 @@ export class RequestService {
       }
     );
   }
+
   getHistory(): Observable<any> {
-  return this.http.get(
-    `${this.apiUrl}/history`,
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
-getRequestById(id: number): Observable<any> {
-  return this.http.get(
-    `${this.apiUrl}/${id}`,
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
-cancelRequest(id: number): Observable<any> {
-  return this.http.put(
-    `${this.apiUrl}/${id}/cancel`,
-    {},
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
-getMechanicActiveRequest() {
-  return this.http.get<any>(
-    `${this.apiUrl}/mechanic/active`,
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
+    return this.http.get(
+      `${this.apiUrl}/history`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
 
-getMechanicStats() {
-  return this.http.get<any>(
-    `${this.apiUrl}/mechanic/stats`,
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
-getMechanicProfile() {
-  return this.http.get<any>(
-    'https://resqora-api.onrender.com/api/mechanics/profile',
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
+  getRequestById(id: number): Observable<any> {
+    return this.http.get(
+      `${this.apiUrl}/${id}`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
 
-updateMechanicAvailability(
-  availability: boolean
-) {
-  return this.http.put<any>(
-    'https://resqora-api.onrender.com/api/mechanics/availability',
-    {
-      availability
-    },
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
+  cancelRequest(id: number): Observable<any> {
+    return this.http.put(
+      `${this.apiUrl}/${id}/cancel`,
+      {},
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
 
-getMechanicHistory(): Observable<any[]> {
-  return this.http.get<any[]>(
-    'https://resqora-api.onrender.com/api/mechanics/history',
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
-submitReview(data: any) {
-  return this.http.post(
-    'https://resqora-api.onrender.com/api/reviews',
-    data,
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
+  getMechanicActiveRequest() {
+    return this.http.get<any>(
+      `${this.apiUrl}/mechanic/active`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
 
-getMechanicReviews() {
-  return this.http.get<any[]>(
-    'https://resqora-api.onrender.com/api/reviews/mechanic',
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
-markCashCollected(
-  requestId: number
-): Observable<any> {
-  return this.http.put(
-    `${this.apiUrl}/${requestId}/cash-collected`,
-    {},
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
-triggerEmergency(
-  lat: number,
-  lng: number
-) {
-  return this.http.post(
-    `${this.apiUrl}/emergency/trigger?latitude=${lat}&longitude=${lng}`,
-    {},
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
+  getMechanicStats() {
+    return this.http.get<any>(
+      `${this.apiUrl}/mechanic/stats`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
+  getMechanicProfile() {
+    return this.http.get<any>(
+      `${this.mechanicUrl}/profile`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
+  updateMechanicAvailability(
+    availability: boolean
+  ) {
+    return this.http.put<any>(
+      `${this.mechanicUrl}/availability`,
+      {
+        availability
+      },
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
+  getMechanicHistory(): Observable<any[]> {
+    return this.http.get<any[]>(
+      `${this.mechanicUrl}/history`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
+  submitReview(data: any) {
+    return this.http.post(
+      this.reviewUrl,
+      data,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
+  getMechanicReviews() {
+    return this.http.get<any[]>(
+      `${this.reviewUrl}/mechanic`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
+
+  markCashCollected(
+    requestId: number
+  ): Observable<any> {
+    return this.http.put(
+      `${this.apiUrl}/${requestId}/cash-collected`,
+      {},
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
 }

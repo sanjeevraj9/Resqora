@@ -10,6 +10,7 @@ import { ServiceDetailsComponent } from './components/service-details/service-de
 import { MechanicProfileComponent } from './components/mechanic-profile/mechanic-profile.component';
 import { MechanicHistoryComponent } from './components/mechanic-history/mechanic-history.component';
 import { PaymentComponent } from './components/payment/payment.component';
+import { EmailVerifiedComponent } from './components/email-verified/email-verified.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -38,6 +39,10 @@ export const routes: Routes = [
 {
   path: 'payment',
   component: PaymentComponent
+},
+{
+  path: 'email-verified',
+  component: EmailVerifiedComponent
 },
   { path: '**', redirectTo: '' }
 

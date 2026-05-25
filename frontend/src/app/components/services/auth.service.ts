@@ -4,6 +4,7 @@ import {
   HttpHeaders
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +12,13 @@ import { Observable } from 'rxjs';
 export class AuthService {
 
   private authUrl =
-    'https://resqora-api.onrender.com/api/auth';
+    `${environment.apiUrl}/api/auth`;
 
   private userUrl =
-    'https://resqora-api.onrender.com/api/users';
+    `${environment.apiUrl}/api/users`;
 
   private mechanicUrl =
-    'https://resqora-api.onrender.com/api/mechanics';
+    `${environment.apiUrl}/api/mechanics`;
 
   constructor(
     private http: HttpClient

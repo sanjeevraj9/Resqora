@@ -3,13 +3,15 @@ import {
   HttpClient,
   HttpHeaders
 } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class VehicleService {
 
-  private apiUrl = 'https://resqora-api.onrender.com/api/vehicles';
+  private apiUrl =
+    `${environment.apiUrl}/api/vehicles`;
 
   constructor(private http: HttpClient) {}
 
@@ -39,12 +41,13 @@ export class VehicleService {
       }
     );
   }
+
   getUserVehicles() {
-  return this.http.get<any[]>(
-    `${this.apiUrl}/my-vehicles`,
-    {
-      headers: this.getHeaders()
-    }
-  );
-}
+    return this.http.get<any[]>(
+      `${this.apiUrl}/my-vehicles`,
+      {
+        headers: this.getHeaders()
+      }
+    );
+  }
 }
