@@ -105,24 +105,34 @@ export class AuthService {
     );
   }
 
-  saveAuth(response: any) {
-    if (!response?.token) return;
+ saveAuth(response: any) {
+  if (!response?.token) return;
 
-    localStorage.setItem(
-      'token',
-      response.token
-    );
+  localStorage.setItem(
+    'token',
+    response.token
+  );
 
-    localStorage.setItem(
-      'email',
-      response.email
-    );
+  localStorage.setItem(
+    'email',
+    response.email
+  );
 
-    localStorage.setItem(
-      'role',
-      response.role
-    );
-  }
+  localStorage.setItem(
+    'role',
+    response.role
+  );
+
+  localStorage.setItem(
+    'user',
+    JSON.stringify({
+      id: response.id,
+      email: response.email,
+      role: response.role,
+      name: response.name
+    })
+  );
+}
 
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');

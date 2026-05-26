@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Client } from '@stomp/stompjs';
+import { environment } from 'src/environments/environment';
+
+const SockJS = require('sockjs-client');
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +19,8 @@ export class WebsocketService {
       localStorage.getItem('token');
 
     this.stompClient = new Client({
-      brokerURL: 'ws://resqora-api.onrender.com/ws',
+      webSocketFactory: () =>
+        new SockJS(environment.wsUrl),
 
       connectHeaders: {
         Authorization: `Bearer ${token}`
@@ -25,16 +29,24 @@ export class WebsocketService {
       reconnectDelay: 5000,
 
       onConnect: () => {
-        console.log('WEBSOCKET CONNECTED');
+        console.log(
+          'WEBSOCKET CONNECTED'
+        );
         this.connected = true;
       },
 
       onStompError: (frame) => {
-        console.error('STOMP ERROR:', frame);
+        console.error(
+          'STOMP ERROR:',
+          frame
+        );
       },
 
       onWebSocketError: (err) => {
-        console.error('WS ERROR:', err);
+        console.error(
+          'WS ERROR:',
+          err
+        );
       }
     });
 
@@ -58,7 +70,9 @@ export class WebsocketService {
             topic,
             (message) => {
               callback(
-                JSON.parse(message.body)
+                JSON.parse(
+                  message.body
+                )
               );
             }
           );

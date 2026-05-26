@@ -20,47 +20,29 @@
   <!-- EMPTY -->
   <div
     class="request-card empty-card"
-    *ngIf="!incomingRequest && !activeRequest">
-
-    <div class="empty-icon">
-      🛠️
-    </div>
+    *ngIf="!incomingRequest && !activeRequest"
+  >
+    <div class="empty-icon">🛠️</div>
 
     <h2>No Active Requests</h2>
 
-    <p>
-      Waiting for nearby customer requests...
-    </p>
-
+    <p>Waiting for nearby customer requests...</p>
   </div>
 
   <!-- INCOMING REQUEST -->
   <div
     class="request-card incoming"
-    *ngIf="incomingRequest">
-
-    <h2>
-      New Service Request 🚨
-    </h2>
+    *ngIf="incomingRequest"
+  >
+    <h2>New Service Request 🚨</h2>
 
     <div class="customer-box">
-
-      <div class="customer-avatar">
-        👤
-      </div>
+      <div class="customer-avatar">👤</div>
 
       <div>
-
-        <h3>
-          {{ incomingRequest.customerName }}
-        </h3>
-
-        <p>
-          {{ incomingRequest.customerPhone }}
-        </p>
-
+        <h3>{{ incomingRequest.customerName }}</h3>
+        <p>{{ incomingRequest.customerPhone }}</p>
       </div>
-
     </div>
 
     <p>
@@ -82,67 +64,77 @@
 
       <button
         class="call-btn"
-        (click)="callCustomer()">
-
+        (click)="callCustomer()"
+      >
         📞 Call
-
       </button>
 
       <button
         class="nav-btn"
-        (click)="openNavigation()">
-
+        (click)="openNavigation()"
+      >
         🗺 Navigate
-
       </button>
 
       <button
         class="accept-btn"
-        (click)="acceptRequest()">
-
+        (click)="acceptRequest()"
+      >
         Accept
-
       </button>
 
       <button
         class="reject-btn"
-        (click)="rejectRequest()">
-
+        (click)="rejectRequest()"
+      >
         Reject
-
       </button>
 
     </div>
-
   </div>
 
   <!-- ACTIVE JOB -->
   <div
     class="request-card active-job"
-    *ngIf="activeRequest">
+    *ngIf="activeRequest"
+  >
+    <h2>Active Job 🚗</h2>
 
-    <h2>
-      Active Job 🚗
-    </h2>
-
-    <!-- PAYMENT INFO -->
+    <!-- PAYMENT -->
     <div class="payment-info">
 
-      <span
-        class="paid"
-        *ngIf="activeRequest.paymentStatus === 'PAID'">
+      <!-- UPI -->
+      <div
+        *ngIf="
+          activeRequest.paymentMethod === 'UPI' &&
+          activeRequest.paymentStatus === 'PAID'
+        "
+        class="payment-success"
+      >
+        💳 Payment Completed ✅
+      </div>
 
-        💳 Paid
-
-      </span>
-
-      <span
+      <!-- CASH -->
+      <div
+        *ngIf="
+          activeRequest.paymentMethod === 'CASH' &&
+          activeRequest.paymentStatus === 'CASH_PENDING'
+        "
         class="cod"
-        *ngIf="activeRequest.paymentStatus === 'CASH_PENDING'">
-
+      >
         💵 Cash Pending
+      </div>
 
-      </span>
+      <!-- CASH PAID -->
+      <div
+        *ngIf="
+          activeRequest.paymentMethod === 'CASH' &&
+          activeRequest.paymentStatus === 'PAID'
+        "
+        class="payment-success"
+      >
+        💳 Payment Completed ✅
+      </div>
 
     </div>
 
@@ -165,38 +157,59 @@
 
       <button
         class="call-btn"
-        (click)="callCustomer()">
-
+        (click)="callCustomer()"
+      >
         📞 Call
-
       </button>
 
       <button
         class="nav-btn"
-        (click)="openNavigation()">
-
+        (click)="openNavigation()"
+      >
         🗺 Navigate
-
       </button>
 
-      <!-- COLLECT CASH BUTTON -->
+      <!-- CHAT -->
       <button
-        class="cash-btn"
-        *ngIf="activeRequest.paymentStatus === 'CASH_PENDING'"
-        (click)="collectCash(activeRequest)">
-
-        💵 Collect Cash
-
+        class="chat-btn"
+        (click)="showChat = !showChat"
+      >
+        {{ showChat ? 'Close Chat' : '💬 Chat with User' }}
       </button>
 
+      <!-- COLLECT CASH -->
+      <button
+        *ngIf="
+          activeRequest.paymentMethod === 'CASH' &&
+          activeRequest.status === 'COMPLETED' &&
+          activeRequest.paymentStatus !== 'PAID'
+        "
+        (click)="collectCash(activeRequest)"
+      >
+        Collect Cash
+      </button>
+
+      <!-- STATUS -->
       <button
         *ngFor="let status of statuses"
-        (click)="updateStatus(status)">
-
+        (click)="updateStatus(status)"
+      >
         {{ status.replace('_', ' ') }}
-
       </button>
 
+    </div>
+
+    <!-- CHAT BOX -->
+    <div
+      class="chat-wrapper"
+      *ngIf="showChat && activeRequest"
+    >
+      <app-chat
+        [userId]="mechanicId"
+        [receiverId]="userId"
+        [bookingId]="bookingId"
+      >
+      </app-chat>
     </div>
 
   </div>
@@ -204,19 +217,15 @@
   <!-- HISTORY -->
   <div
     class="history-section"
-    *ngIf="jobHistory.length > 0">
-
-    <h2>
-      Recent Completed Jobs
-    </h2>
+    *ngIf="jobHistory.length > 0"
+  >
+    <h2>Recent Completed Jobs</h2>
 
     <div
       class="history-card"
-      *ngFor="let job of jobHistory">
-
-      <h4>
-        {{ job.issueType }}
-      </h4>
+      *ngFor="let job of jobHistory"
+    >
+      <h4>{{ job.issueType }}</h4>
 
       <p>
         Customer:
@@ -232,7 +241,6 @@
       </p>
 
     </div>
-
   </div>
 
 </div>

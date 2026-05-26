@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { RequestService } from '../services/request.service';
 import { WebsocketService } from '../services/websocket.service';
 import { MechanicShellHeaderComponent } from '../mechanic-shell-header/mechanic-shell-header.component';
+import{ChatComponent} from '../chat/chat.component';
 
 @Component({
   selector: 'app-mechanic-dashboard',
@@ -17,7 +18,8 @@ import { MechanicShellHeaderComponent } from '../mechanic-shell-header/mechanic-
   imports: [
     CommonModule,
     FormsModule,
-    MechanicShellHeaderComponent
+    MechanicShellHeaderComponent,
+    ChatComponent
   ],
   templateUrl: './mechanic-dashboard.component.html',
   styleUrls: ['./mechanic-dashboard.component.scss']
@@ -28,6 +30,7 @@ export class MechanicDashboardComponent
   incomingRequest: any = null;
   activeRequest: any = null;
   jobHistory: any[] = [];
+  showChat=false;
 
   todayEarnings = 0;
   completedJobs = 0;
@@ -126,30 +129,52 @@ export class MechanicDashboardComponent
     );
   }
 
-  acceptRequest() {
-    if (!this.incomingRequest) return;
+ acceptRequest() {
+  if (!this.incomingRequest) return;
 
-    this.requestService
-      .acceptRequest(this.incomingRequest.requestId)
-      .subscribe({
-        next: (res: any) => {
-          this.activeRequest = {
-            ...res,
-            customerName:
-              this.incomingRequest.customerName,
-            customerPhone:
-              this.incomingRequest.customerPhone,
-            latitude:
-              this.incomingRequest.latitude,
-            longitude:
-              this.incomingRequest.longitude
-          };
+  this.requestService
+    .acceptRequest(this.incomingRequest.requestId)
+    .subscribe({
+      next: (res: any) => {
 
-          this.incomingRequest = null;
-          this.startLiveLocationSharing();
-        }
-      });
-  }
+        console.log('ACCEPT RESPONSE', res);
+        console.log('INCOMING', this.incomingRequest);
+
+        this.activeRequest = {
+          ...res,
+
+          userId:
+            res.userId ||
+            this.incomingRequest.userId,
+
+          customerName:
+            this.incomingRequest.customerName,
+
+          customerPhone:
+            this.incomingRequest.customerPhone,
+
+          latitude:
+            this.incomingRequest.latitude,
+
+          longitude:
+            this.incomingRequest.longitude
+        };
+
+        console.log(
+          'ACTIVE REQUEST FINAL',
+          this.activeRequest
+        );
+
+        this.incomingRequest = null;
+
+        this.startLiveLocationSharing();
+      },
+
+      error: (err) => {
+        console.log(err);
+      }
+    });
+}
 
   rejectRequest() {
     if (!this.incomingRequest) return;
@@ -164,17 +189,7 @@ export class MechanicDashboardComponent
   updateStatus(status: string) {
     if (!this.activeRequest) return;
 
-    // COD validation
-    if (
-      status === 'COMPLETED' &&
-      this.activeRequest.paymentStatus ===
-        'CASH_PENDING'
-    ) {
-      alert(
-        'Please collect cash before completing service'
-      );
-      return;
-    }
+   
 
     this.requestService
       .updateStatus(
@@ -254,6 +269,21 @@ export class MechanicDashboardComponent
         );
       }, 5000);
   }
+
+  get mechanicId(): number {
+  const user = JSON.parse(
+    localStorage.getItem('user') || '{}'
+  );
+  return user.id;
+}
+
+get userId(): number {
+  return this.activeRequest?.userId || 0;
+}
+
+get bookingId(): number {
+  return this.activeRequest?.id || 0;
+}
 
   formatDate(date: string) {
     return new Date(date)

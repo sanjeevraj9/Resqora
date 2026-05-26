@@ -1,26 +1,80 @@
 <nav [class.scrolled]="scrolled">
-  <a routerLink="/" class="logo">RESQ<span>ORA</span></a>
+  <a
+    routerLink="/"
+    class="logo"
+  >
+    RESQ<span>ORA</span>
+  </a>
 
   <ul class="nav-links">
     <li *ngFor="let link of navLinks">
-      <a [href]="link.href">{{ link.label }}</a>
+      <a
+        (click)="scrollToSection(link.href)"
+      >
+        {{ link.label }}
+      </a>
     </li>
   </ul>
 
   <div class="nav-actions">
-    <a href="#auth-section" class="nav-login">Sign In</a>
-    <a routerLink="/register" class="nav-cta">🚨 Book Service</a>
+    <a
+      routerLink="/login"
+      class="nav-login"
+    >
+      Sign In
+    </a>
+
+    <a
+      routerLink="/login"
+      class="nav-cta"
+    >
+      🚨 Book Service
+    </a>
   </div>
 
-  <button class="hamburger" (click)="toggleMobile()" aria-label="Menu">
-    <span></span><span></span><span></span>
+  <button
+    class="hamburger"
+    (click)="toggleMobile()"
+    aria-label="Menu"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
   </button>
 </nav>
 
-<!-- Mobile Menu -->
-<div class="mobile-menu" [class.open]="mobileOpen">
-  <button class="close-btn" (click)="closeMobile()">✕</button>
-  <a *ngFor="let link of navLinks" [href]="link.href" (click)="closeMobile()">{{ link.label }}</a>
-  <a routerLink="/login" class="mobile-login" (click)="closeMobile()">Sign In</a>
-  <a routerLink="/register" class="mobile-cta" (click)="closeMobile()">🚨 Book Service Now</a>
+<!-- MOBILE MENU -->
+<div
+  class="mobile-menu"
+  [class.open]="mobileOpen"
+>
+  <button
+    class="close-btn"
+    (click)="closeMobile()"
+  >
+    ✕
+  </button>
+
+  <a
+    *ngFor="let link of navLinks"
+    (click)="scrollToSection(link.href)"
+  >
+    {{ link.label }}
+  </a>
+
+  <a
+    routerLink="/login"
+    class="mobile-login"
+    (click)="closeMobile()"
+  >
+    Sign In
+  </a>
+
+  <a
+    routerLink="/login"
+    class="mobile-cta"
+    (click)="closeMobile()"
+  >
+    🚨 Book Service Now
+  </a>
 </div>

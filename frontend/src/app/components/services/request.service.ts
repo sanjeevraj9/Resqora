@@ -168,15 +168,16 @@ export class RequestService {
     );
   }
 
-  submitReview(data: any) {
-    return this.http.post(
-      this.reviewUrl,
-      data,
-      {
-        headers: this.getHeaders()
-      }
-    );
-  }
+submitReview(data: any) {
+  return this.http.post(
+    this.reviewUrl,
+    data,
+    {
+      headers: this.getHeaders(),
+      responseType: 'text' as 'json'
+    }
+  );
+}
 
   getMechanicReviews() {
     return this.http.get<any[]>(

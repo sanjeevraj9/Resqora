@@ -10,8 +10,8 @@ import { Router } from '@angular/router';
 import * as L from 'leaflet';
 
 import { RequestService } from '../services/request.service';
-
 import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header.component';
+import { ChatComponent } from '../chat/chat.component';
 
 @Component({
   selector: 'app-tracking',
@@ -19,15 +19,16 @@ import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header
   imports: [
     CommonModule,
     FormsModule,
-    UserShellHeaderComponent
+    UserShellHeaderComponent,
+    ChatComponent
   ],
   templateUrl: './tracking.component.html',
   styleUrls: ['./tracking.component.scss']
 })
-export class TrackingComponent
-  implements OnInit {
+export class TrackingComponent implements OnInit {
 
   request: any = null;
+  showChat = false;
 
   currentStatus = 'SEARCHING';
   mechanicAssigned = false;
@@ -51,7 +52,6 @@ export class TrackingComponent
 
   constructor(
     private requestService: RequestService,
-    
     private router: Router
   ) {}
 
@@ -60,7 +60,38 @@ export class TrackingComponent
     this.loadTracking();
   }
 
+  get userId(): number {
+    const user = JSON.parse(
+      localStorage.getItem('user') || '{}'
+    );
+    return user.id;
+  }
+
+  get mechanicId(): number {
+    return this.request?.mechanicId || 0;
+  }
+
+  get bookingId(): number {
+    return this.request?.id || 0;
+  }
+
   initMap() {
+    const iconDefault = L.icon({
+      iconUrl:
+        'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      iconRetinaUrl:
+        'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      shadowUrl:
+        'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+      popupAnchor: [1, -34],
+      shadowSize: [41, 41]
+    });
+
+    L.Marker.prototype.options.icon =
+      iconDefault;
+
     this.map = L.map('liveMap').setView(
       [22.7196, 75.8577],
       13
@@ -69,8 +100,7 @@ export class TrackingComponent
     L.tileLayer(
       'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       {
-        attribution:
-          '© OpenStreetMap'
+        attribution: '© OpenStreetMap'
       }
     ).addTo(this.map);
   }
@@ -80,9 +110,7 @@ export class TrackingComponent
       localStorage.getItem('activeRequest');
 
     if (!activeRequest) {
-      this.router.navigate([
-        '/user-home'
-      ]);
+      this.router.navigate(['/user-home']);
       return;
     }
 
@@ -94,35 +122,28 @@ export class TrackingComponent
       .subscribe({
         next: (res: any) => {
           this.request = res;
+          this.currentStatus = res.status;
 
-          this.currentStatus =
-            res.status;
+          this.mechanicAssigned =
+            !!res.mechanicName;
 
-          if (
-            res.status !== 'REQUESTED'
-          ) {
-            this.mechanicAssigned =
-              true;
-
-            this.mechanicName =
-              res.mechanicName ||
-              'Mechanic Assigned';
-          }
+          this.mechanicName =
+            res.mechanicName || '';
 
           this.updateMapMarkers(res);
 
           if (
-            res.status ===
-            'COMPLETED'
+            res.status === 'COMPLETED' &&
+            !this.showReviewModal
           ) {
-            this.showReviewModal =
-              true;
+            this.showReviewModal = true;
           }
 
           setTimeout(() => {
             this.loadTracking();
           }, 5000);
         },
+
         error: () => {
           console.log(
             'Tracking fetch failed'
@@ -148,10 +169,7 @@ export class TrackingComponent
       ]).addTo(this.map);
 
       this.map.setView(
-        [
-          res.latitude,
-          res.longitude
-        ],
+        [res.latitude, res.longitude],
         13
       );
     }
@@ -169,17 +187,14 @@ export class TrackingComponent
   cancelBooking() {
     if (!this.request) return;
 
-    const confirmCancel =
-      confirm(
-        'Cancel this request?'
-      );
+    const confirmCancel = confirm(
+      'Cancel this request?'
+    );
 
     if (!confirmCancel) return;
 
     this.requestService
-      .cancelRequest(
-        this.request.id
-      )
+      .cancelRequest(this.request.id)
       .subscribe({
         next: () => {
           alert(
@@ -194,10 +209,9 @@ export class TrackingComponent
             '/user-home'
           ]);
         },
+
         error: () => {
-          alert(
-            'Cancel failed'
-          );
+          alert('Cancel failed');
         }
       });
   }
@@ -223,31 +237,34 @@ export class TrackingComponent
       comment: this.reviewComment
     };
 
-  //   this.reviewService
-  //     .submitReview(reviewPayload)
-  //     .subscribe({
-  //       next: () => {
-  //         alert(
-  //           'Review submitted'
-  //         );
+    this.requestService
+      .submitReview(reviewPayload)
+      .subscribe({
+        next: () => {
+          alert(
+            'Review submitted successfully ✅'
+          );
 
-  //         this.showReviewModal =
-  //           false;
+          this.showReviewModal =
+            false;
 
-  //         localStorage.removeItem(
-  //           'activeRequest'
-  //         );
+          localStorage.removeItem(
+            'activeRequest'
+          );
 
-  //         this.router.navigate([
-  //           '/user-home'
-  //         ]);
-  //       },
-  //       error: () => {
-  //         alert(
-  //           'Review failed'
-  //         );
-  //       }
-  //     });
-   }
-  
+          this.router.navigate([
+            '/user-home'
+          ]);
+        },
+
+        error: (err) => {
+          console.log(err);
+
+          alert(
+            err?.error?.message ||
+              'Review failed'
+          );
+        }
+      });
+  }
 }

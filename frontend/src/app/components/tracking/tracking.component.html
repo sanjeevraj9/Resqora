@@ -30,19 +30,16 @@
     <div
       class="payment-badge paid"
       *ngIf="request?.paymentStatus === 'PAID'">
-
       💳 Payment Completed
-
     </div>
 
     <div
       class="payment-badge cod"
       *ngIf="request?.paymentStatus === 'CASH_PENDING'">
-
       💵 Cash On Delivery
-
     </div>
 
+    <!-- TIMELINE -->
     <div class="timeline">
 
       <div
@@ -66,22 +63,33 @@
 
     </div>
 
+    <!-- CANCEL BUTTON -->
     <button
       class="cancel-btn"
       *ngIf="currentStatus !== 'COMPLETED'"
       (click)="cancelBooking()">
-
       Cancel Request
-
     </button>
 
-    <div
-      class="live-map"
-      id="liveMap">
+    <!-- CHAT BUTTON -->
+    <button
+      class="chat-btn"
+      *ngIf="mechanicAssigned"
+      (click)="showChat = !showChat">
+      {{ showChat ? '❌ Close Chat' : '💬 Chat with Mechanic' }}
+    </button>
 
-      <!-- Leaflet map -->
-
+    <!-- CHAT WINDOW -->
+    <div class="chat-wrapper" *ngIf="showChat && mechanicAssigned">
+      <app-chat
+        [userId]="userId"
+        [receiverId]="mechanicId"
+        [bookingId]="bookingId">
+      </app-chat>
     </div>
+
+    <!-- MAP -->
+    <div class="live-map" id="liveMap"></div>
 
   </div>
 
@@ -92,13 +100,9 @@
 
     <div class="review-modal">
 
-      <h2>
-        Service Completed 🎉
-      </h2>
+      <h2>Service Completed 🎉</h2>
 
-      <p>
-        Rate your mechanic
-      </p>
+      <p>Rate your mechanic</p>
 
       <div class="stars">
 
@@ -106,9 +110,7 @@
           *ngFor="let star of [1,2,3,4,5]"
           (click)="setRating(star)"
           [class.active]="star <= selectedRating">
-
           ⭐
-
         </span>
 
       </div>
@@ -121,9 +123,7 @@
       <button
         class="submit-review-btn"
         (click)="submitReview()">
-
         Submit Review
-
       </button>
 
     </div>
