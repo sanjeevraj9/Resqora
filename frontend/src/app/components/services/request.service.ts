@@ -99,7 +99,7 @@ export class RequestService {
     );
   }
 
-  getRequestById(id: number): Observable<any> {
+  getRequest(id: number): Observable<any> {
     return this.http.get(
       `${this.apiUrl}/${id}`,
       {
@@ -107,6 +107,22 @@ export class RequestService {
       }
     );
   }
+  updatePayment(
+  requestId: number,
+  paymentMethod: string,
+  paymentStatus: string
+) {
+  return this.http.put(
+    `${this.apiUrl}/${requestId}/payment`,
+    {
+      paymentMethod,
+      paymentStatus
+    },
+    {
+      headers: this.getHeaders()
+    }
+  );
+}
 
   cancelRequest(id: number): Observable<any> {
     return this.http.put(
@@ -187,6 +203,23 @@ submitReview(data: any) {
       }
     );
   }
+  updateAvailability(
+  availability: boolean
+) {
+
+  return this.http.put(
+
+    `${this.apiUrl}/mechanics/availability`,
+
+    {
+      availability
+    },
+
+    {
+      headers: this.getHeaders()
+    }
+  );
+}
 
   markCashCollected(
     requestId: number

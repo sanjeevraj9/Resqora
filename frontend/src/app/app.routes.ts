@@ -11,6 +11,9 @@ import { MechanicProfileComponent } from './components/mechanic-profile/mechanic
 import { MechanicHistoryComponent } from './components/mechanic-history/mechanic-history.component';
 import { PaymentComponent } from './components/payment/payment.component';
 import { EmailVerifiedComponent } from './components/email-verified/email-verified.component';
+import {ChatWidgetComponent} from './components/chat-widget/chat-widget.component';
+import { OAuthSuccessComponent } from './components/oauth-success/oauth-success.component';
+import { CompleteProfileComponent } from './components/complete-profile/complete-profile.component';
 
 export const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -43,6 +46,18 @@ export const routes: Routes = [
 {
   path: 'email-verified',
   component: EmailVerifiedComponent
+},
+{
+  path: 'live-support',
+  component: ChatWidgetComponent
+},
+{
+  path: 'oauth-success',
+  component: OAuthSuccessComponent
+},
+{
+  path: 'complete-profile',
+  component: CompleteProfileComponent
 },
   { path: '**', redirectTo: '' }
 

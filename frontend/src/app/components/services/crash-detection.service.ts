@@ -76,9 +76,7 @@ export class CrashDetectionService {
                 '🚨 Emergency alert sent automatically'
               );
             },
-            error: (err) => {
-              console.log(err);
-            }
+            error: () => {}
           });
       }
     );

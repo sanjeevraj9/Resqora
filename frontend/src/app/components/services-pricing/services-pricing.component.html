@@ -1,10 +1,8 @@
 <app-user-shell-header></app-user-shell-header>
 
-<!DOCTYPE html>
-
 <div class="pricing-page">
- 
 
+  <!-- HERO -->
   <section class="hero">
 
     <p class="badge">
@@ -16,35 +14,63 @@
     </h1>
 
     <p class="sub">
-      Fast roadside assistance for bikes & cars.
-      Transparent pricing with instant booking.
+      Services customized for your
+      {{ selectedVehicle }}
     </p>
 
   </section>
 
+  <!-- SERVICES -->
   <section class="pricing-grid">
 
     <div
       class="pricing-card"
-      *ngFor="let service of services">
+      *ngFor="let service of services"
+    >
 
       <div class="icon">
         {{ service.icon }}
       </div>
 
-      <h3>{{ service.title }}</h3>
+      <h3>
+        {{ service.title }}
+      </h3>
 
-      <p>{{ service.desc }}</p>
+      <p>
+        {{ service.desc }}
+      </p>
 
       <div class="price">
-        {{ service.price }}
+        ₹{{ service.price }}
       </div>
 
-      <button (click)="selectService(service)">
-  Book Service →
-</button>
+      <button
+        (click)="selectService(service)"
+      >
+        Book Service →
+      </button>
+
     </div>
 
   </section>
+
+  <!-- EMPTY STATE -->
+  <div
+    class="empty-state"
+    *ngIf="services.length === 0"
+  >
+    <div class="empty-icon">
+      🚗
+    </div>
+
+    <h2>
+      No Services Available
+    </h2>
+
+    <p>
+      No services found for
+      {{ selectedVehicle }}
+    </p>
+  </div>
 
 </div>

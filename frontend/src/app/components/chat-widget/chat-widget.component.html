@@ -1,11 +1,8 @@
-<!-- Chat Toggle Button -->
-<button class="chat-toggle" (click)="toggleChat()" [class.open]="isOpen">
-  <span class="toggle-icon">{{ isOpen ? '✕' : '💬' }}</span>
-  <span class="chat-label" *ngIf="!isOpen">Live Support</span>
-</button>
+<app-user-shell-header></app-user-shell-header>
+
 
 <!-- Chat Window -->
-<div class="chat-window" [class.visible]="isOpen">
+<div class="chat-window visible full-page-chat">
   <!-- Header -->
   <div class="chat-header">
     <div class="agent-info">
@@ -15,7 +12,6 @@
         <div class="agent-status"><span class="dot"></span> Online • Replies instantly</div>
       </div>
     </div>
-    <button class="close-chat" (click)="toggleChat()">✕</button>
   </div>
 
   <!-- Messages -->

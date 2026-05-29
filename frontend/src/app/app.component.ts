@@ -11,7 +11,6 @@ import { filter } from 'rxjs/operators';
 
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { ChatWidgetComponent } from './components/chat-widget/chat-widget.component';
 
 @Component({
   selector: 'app-root',
@@ -21,8 +20,7 @@ import { ChatWidgetComponent } from './components/chat-widget/chat-widget.compon
     RouterModule,
     RouterOutlet,
     NavbarComponent,
-    FooterComponent,
-    ChatWidgetComponent
+    FooterComponent
   ],
   template: `
     <app-navbar *ngIf="!hideNavbar"></app-navbar>
@@ -31,7 +29,7 @@ import { ChatWidgetComponent } from './components/chat-widget/chat-widget.compon
 
     <app-footer></app-footer>
 
-    <app-chat-widget></app-chat-widget>
+   
   `
 })
 export class AppComponent {
@@ -54,9 +52,12 @@ export class AppComponent {
           '/service-details',
           '/issue-details',
           '/tracking',
+          '/payment',
           '/mechanic-dashboard',
           '/mechanic-profile',
-          '/mechanic-history'
+          '/mechanic-history',
+          '/live-support',
+          '/services'
         ];
 
         this.hideNavbar =

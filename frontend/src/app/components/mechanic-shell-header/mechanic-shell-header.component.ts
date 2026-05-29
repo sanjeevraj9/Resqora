@@ -63,9 +63,7 @@ export class MechanicShellHeaderComponent
       next: (res: any) => {
         this.profile = res;
       },
-      error: (err) => {
-        console.log('PROFILE ERROR:', err);
-      }
+      error: () => {}
     });
   }
 
@@ -108,13 +106,11 @@ export class MechanicShellHeaderComponent
             '/mechanic-dashboard'
           ]);
 
-        } catch (err) {
-          console.log(err);
+        } catch {
           this.selectedCity = 'Indore';
         }
       },
-      (err) => {
-        console.log(err);
+      () => {
         alert('Location permission denied');
       },
       {
@@ -162,26 +158,23 @@ export class MechanicShellHeaderComponent
 
   toggleAvailability() {
   if (!this.profile) return;
+  console.log(this.profile);
 
   const newStatus =
     !this.profile.availability;
 
-  console.log('SENDING:', {
-    availability: newStatus
-  });
-
   this.authService
     .updateAvailability(newStatus)
     .subscribe({
-      next: (res: any) => {
-        console.log('SUCCESS:', res);
+     next: () => {
 
-        this.profile = res;
-      },
-      error: (err) => {
-        console.log('FULL ERROR:', err);
-        console.log('ERROR BODY:', err.error);
+  if (this.profile) {
 
+    this.profile.availability =
+      newStatus;
+  }
+},
+      error: () => {
         alert('Availability update failed');
       }
     });

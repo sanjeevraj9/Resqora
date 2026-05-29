@@ -1,55 +1,118 @@
+<app-user-shell-header></app-user-shell-header>
+
 <div class="payment-page">
 
-  <div class="payment-card">
+  <div class="checkout-shell">
 
-    <h1>Complete Payment</h1>
+    <section class="payment-card">
 
-    <p class="subtitle">
-      Choose your preferred payment method
-    </p>
+      <div class="section-heading">
+        <span>Step 2 of 2</span>
 
-    <div
-      class="payment-option"
-      [class.active]="selectedMethod === 'UPI'"
-      (click)="selectMethod('UPI')">
+        <h1>Complete Payment</h1>
 
-      <div class="icon">💳</div>
-
-      <div>
-        <h3>UPI Payment</h3>
-        <p>Pay instantly using UPI</p>
+        <p>
+          Choose how you want to pay for your roadside assistance booking.
+        </p>
       </div>
 
-    </div>
+      <div class="method-list">
 
-    <div
-      class="payment-option"
-      [class.active]="selectedMethod === 'COD'"
-      (click)="selectMethod('COD')">
+        <button
+          type="button"
+          class="payment-option"
+          [class.active]="selectedMethod === 'UPI'"
+          (click)="selectMethod('UPI')">
 
-      <div class="icon">💵</div>
+          <span class="method-icon">UPI</span>
 
-      <div>
-        <h3>Cash on Delivery</h3>
-        <p>Pay after service completion</p>
+          <span class="method-copy">
+            <strong>UPI Payment</strong>
+            <small>Pay instantly using UPI apps</small>
+          </span>
+
+          <span class="radio-dot"></span>
+
+        </button>
+
+        <button
+          type="button"
+          class="payment-option"
+          [class.active]="selectedMethod === 'COD'"
+          (click)="selectMethod('COD')">
+
+          <span class="method-icon cash">COD</span>
+
+          <span class="method-copy">
+            <strong>Cash on Delivery</strong>
+            <small>Pay after the mechanic completes service</small>
+          </span>
+
+          <span class="radio-dot"></span>
+
+        </button>
+
       </div>
 
-    </div>
+      <div class="payment-note">
+        <strong>Safe checkout</strong>
+        <span>Your booking will move to live tracking after payment confirmation.</span>
+      </div>
 
-    <button
-      class="pay-btn"
-      [disabled]="loading"
-      (click)="continuePayment()">
+      <button
+        class="pay-btn"
+        [disabled]="loading || !requestData"
+        (click)="continuePayment()">
 
-      {{
-        loading
-          ? 'Processing...'
-          : selectedMethod === 'UPI'
-            ? 'Pay Now'
-            : 'Continue'
-      }}
+        {{
+          loading
+            ? 'Processing...'
+            : selectedMethod === 'UPI'
+              ? 'Pay Now'
+              : 'Confirm Cash Payment'
+        }}
 
-    </button>
+      </button>
+
+    </section>
+
+    <aside class="summary-card">
+
+      <h2>Booking Summary</h2>
+
+      <div class="summary-row">
+        <span>Booking ID</span>
+        <strong>#{{ requestId }}</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Service</span>
+        <strong>{{ requestData?.issueType || 'Roadside Assistance' }}</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Status</span>
+        <strong>{{ requestData?.status || 'REQUESTED' }}</strong>
+      </div>
+
+      <div class="summary-row">
+        <span>Payment method</span>
+        <strong>{{ selectedMethod === 'UPI' ? 'UPI' : 'Cash' }}</strong>
+      </div>
+
+      <div class="amount-box">
+        <span>Total amount</span>
+        <strong>
+          ₹{{ requestData?.estimatedPrice || 0 }}
+        </strong>
+      </div>
+
+      <div class="support-box">
+        <span>Need help?</span>
+        <a href="tel:+919525450138">Call +91 9525450138</a>
+      </div>
+
+    </aside>
 
   </div>
 

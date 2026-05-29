@@ -37,6 +37,16 @@ export class UserHomeComponent
   }
 
   selectedVehicle = 'Bike';
+  availabilityMessage = '';
+
+  private serviceAreaWords = [
+    'bangalore',
+    'bengaluru',
+    'bengaluru urban',
+    'bengaluru rural',
+    'bhopal',
+    'siwan'
+  ];
 
   vehicleOptions = [
     'Bike',
@@ -47,11 +57,12 @@ export class UserHomeComponent
 
   activeRequest: any = null;
 
-  serviceCards = [
+ serviceMap: any = {
+  Bike: [
     {
       icon: '🛞',
       title: 'Puncture Repair',
-      desc: 'Quick tyre puncture assistance'
+      desc: 'Quick bike puncture assistance'
     },
     {
       icon: '⛽',
@@ -61,24 +72,74 @@ export class UserHomeComponent
     {
       icon: '🔋',
       title: 'Battery Jumpstart',
-      desc: 'Instant battery rescue'
+      desc: 'Bike battery support'
     },
+    {
+      icon: '🛠️',
+      title: 'Engine Repair',
+      desc: 'Bike engine support'
+    }
+  ],
+
+  Car: [
     {
       icon: '🚛',
       title: 'Towing',
       desc: 'Fast towing support'
     },
     {
-      icon: '🛠️',
-      title: 'Engine Repair',
-      desc: 'Mechanical issue support'
+      icon: '⛽',
+      title: 'Fuel Delivery',
+      desc: 'Emergency fuel support'
     },
     {
-      icon: '⚡',
-      title: 'EV Support',
-      desc: 'EV emergency assistance'
+      icon: '🔋',
+      title: 'Battery Jumpstart',
+      desc: 'Car battery support'
+    },
+    {
+      icon: '🛠️',
+      title: 'Engine Repair',
+      desc: 'Car engine support'
     }
-  ];
+  ],
+
+  'EV Bike': [
+    {
+      icon: '⚡',
+      title: 'Charging Support',
+      desc: 'Emergency EV charging'
+    },
+    {
+      icon: '🔋',
+      title: 'Battery Diagnostics',
+      desc: 'EV battery inspection'
+    },
+    {
+      icon: '🚛',
+      title: 'EV Towing',
+      desc: 'Safe EV towing support'
+    }
+  ],
+
+  'EV Car': [
+    {
+      icon: '⚡',
+      title: 'Charging Support',
+      desc: 'Emergency EV charging'
+    },
+    {
+      icon: '🔋',
+      title: 'Battery Diagnostics',
+      desc: 'EV battery inspection'
+    },
+    {
+      icon: '🚛',
+      title: 'EV Towing',
+      desc: 'Safe EV towing support'
+    }
+  ]
+};
 
   constructor(
     private router: Router,
@@ -99,6 +160,16 @@ export class UserHomeComponent
   }
 
   checkPrice() {
+    const city = this.selectedCity;
+
+    if (!this.isServiceAvailable(city)) {
+      this.availabilityMessage =
+        `Service not available in ${city} yet`;
+      return;
+    }
+
+    this.availabilityMessage = '';
+
     this.router.navigate(
       ['/services'],
       {
@@ -110,22 +181,41 @@ export class UserHomeComponent
     );
   }
 
-  openService(service: any) {
-    localStorage.setItem(
-      'pendingService',
-      JSON.stringify(service)
-    );
+  private isServiceAvailable(location: string): boolean {
+    const normalized =
+      location
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
 
-    this.router.navigate([
-      '/service-details',
-      service.title
-    ]);
+    return this.serviceAreaWords.some(area =>
+      normalized.includes(area)
+    );
   }
 
+ openService(service: any) {
+  this.router.navigate(
+    ['/service-details', service.title],
+    {
+      queryParams: {
+        vehicle: this.selectedVehicle
+      }
+    }
+  );
+}
+
   trackActiveRequest() {
-    this.router.navigate([
-      '/tracking'
-    ]);
+    this.router.navigate(
+      ['/tracking'],
+      {
+        queryParams: {
+          requestId:
+            this.activeRequest.id ||
+            this.activeRequest.requestId
+        }
+      }
+    );
   }
 
   cancelActiveRequest() {
@@ -249,4 +339,11 @@ export class UserHomeComponent
         }
       });
   }
+  get serviceCards() {
+  return (
+    this.serviceMap[
+      this.selectedVehicle
+    ] || []
+  );
+}
 }

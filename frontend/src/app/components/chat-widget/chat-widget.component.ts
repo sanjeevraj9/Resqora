@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header.component';
 
 interface Message {
   from: 'user' | 'agent';
@@ -11,12 +12,12 @@ interface Message {
 @Component({
   selector: 'app-chat-widget',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, UserShellHeaderComponent],
   templateUrl: './chat-widget.component.html',
   styleUrls: ['./chat-widget.component.scss']
 })
 export class ChatWidgetComponent {
-  isOpen = false;
+  
   inputText = '';
   isTyping = false;
 
@@ -43,9 +44,7 @@ export class ChatWidgetComponent {
     'default': '✅ Thank you! Our support team will assist you right away. For urgent help, call 1800-RESQORA (24/7).'
   };
 
-  toggleChat() {
-    this.isOpen = !this.isOpen;
-  }
+  
 
   getTime(): string {
     return new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });

@@ -5,7 +5,10 @@ import {
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router
+} from '@angular/router';
 
 import * as L from 'leaflet';
 
@@ -25,9 +28,11 @@ import { ChatComponent } from '../chat/chat.component';
   templateUrl: './tracking.component.html',
   styleUrls: ['./tracking.component.scss']
 })
-export class TrackingComponent implements OnInit {
+export class TrackingComponent
+  implements OnInit {
 
   request: any = null;
+  requestId!: number;
   showChat = false;
 
   currentStatus = 'SEARCHING';
@@ -50,21 +55,36 @@ export class TrackingComponent implements OnInit {
   selectedRating = 0;
   reviewComment = '';
 
+  trackingInterval: any;
+
   constructor(
     private requestService: RequestService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     this.initMap();
-    this.loadTracking();
+
+    this.route.queryParams.subscribe(params => {
+      this.requestId =
+        Number(params['requestId']);
+
+      if (!this.requestId) {
+        this.router.navigate(['/user-home']);
+        return;
+      }
+
+      this.loadTracking();
+    });
   }
 
   get userId(): number {
     const user = JSON.parse(
       localStorage.getItem('user') || '{}'
     );
-    return user.id;
+
+    return user.id || 0;
   }
 
   get mechanicId(): number {
@@ -106,19 +126,8 @@ export class TrackingComponent implements OnInit {
   }
 
   loadTracking() {
-    const activeRequest =
-      localStorage.getItem('activeRequest');
-
-    if (!activeRequest) {
-      this.router.navigate(['/user-home']);
-      return;
-    }
-
-    const request =
-      JSON.parse(activeRequest);
-
     this.requestService
-      .getRequestById(request.id)
+      .getRequest(this.requestId)
       .subscribe({
         next: (res: any) => {
           this.request = res;
@@ -139,16 +148,21 @@ export class TrackingComponent implements OnInit {
             this.showReviewModal = true;
           }
 
-          setTimeout(() => {
-            this.loadTracking();
-          }, 5000);
+          if (
+            res.status !== 'COMPLETED'
+          ) {
+            clearTimeout(
+              this.trackingInterval
+            );
+
+            this.trackingInterval =
+              setTimeout(() => {
+                this.loadTracking();
+              }, 5000);
+          }
         },
 
-        error: () => {
-          console.log(
-            'Tracking fetch failed'
-          );
-        }
+        error: () => {}
       });
   }
 
@@ -197,9 +211,7 @@ export class TrackingComponent implements OnInit {
       .cancelRequest(this.request.id)
       .subscribe({
         next: () => {
-          alert(
-            'Request cancelled'
-          );
+          alert('Request cancelled');
 
           localStorage.removeItem(
             'activeRequest'
@@ -258,11 +270,9 @@ export class TrackingComponent implements OnInit {
         },
 
         error: (err) => {
-          console.log(err);
-
           alert(
             err?.error?.message ||
-              'Review failed'
+            'Review failed'
           );
         }
       });

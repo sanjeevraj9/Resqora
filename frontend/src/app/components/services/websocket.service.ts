@@ -29,9 +29,6 @@ export class WebsocketService {
       reconnectDelay: 5000,
 
       onConnect: () => {
-        console.log(
-          'WEBSOCKET CONNECTED'
-        );
         this.connected = true;
       },
 

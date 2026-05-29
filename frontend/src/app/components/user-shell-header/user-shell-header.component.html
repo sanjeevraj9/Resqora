@@ -8,6 +8,72 @@
 
   </div>
 
+  <div class="header-search">
+
+    <button
+      type="button"
+      class="location-chip"
+      (click)="detectCurrentLocation()">
+
+      <span class="location-icon">⌖</span>
+      <span>{{ selectedCity || 'Detecting...' }}</span>
+
+    </button>
+
+    <span class="search-divider"></span>
+
+    <div class="city-search">
+
+      <span class="search-icon">⌕</span>
+
+      <input
+        type="search"
+        [(ngModel)]="citySearchTerm"
+        (focus)="openCitySearch()"
+        (blur)="closeCitySearchSoon()"
+        (input)="filterCitySuggestions()"
+        (keydown.enter)="selectFirstCitySuggestion()"
+        placeholder="Search city, village or area"
+        aria-label="Search city, village or area" />
+
+      <div
+        class="city-suggestions"
+        *ngIf="showCitySuggestions && (placeSuggestions.length || searchLoading)">
+
+        <div
+          class="search-state"
+          *ngIf="searchLoading">
+
+          Searching places...
+
+        </div>
+
+        <button
+          type="button"
+          *ngFor="let place of placeSuggestions"
+          (mousedown)="
+            $event.preventDefault();
+            selectCityFromSearch(place)
+          ">
+
+          {{ place.label }}
+
+        </button>
+
+      </div>
+
+    </div>
+
+    <div
+      class="location-notice"
+      *ngIf="locationNotice">
+
+      {{ locationNotice }}
+
+    </div>
+
+  </div>
+
   <div class="nav-right">
 
     <div
@@ -18,9 +84,7 @@
 
     </div>
 
-    <div class="support">
-      📞 24/7 Support
-    </div>
+    <a class ="live-support" href="/live-support" target="_blank">24×7 Support</a>
 
     <div
       class="account-btn"

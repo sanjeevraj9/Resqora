@@ -85,25 +85,23 @@ export class AuthService {
     );
   }
 
-  updateAvailability(
-    available: boolean
-  ): Observable<any> {
-    const token =
-      localStorage.getItem('token');
+ updateAvailability(
+  availability: boolean
+): Observable<any> {
 
-    return this.http.put(
-      `${this.mechanicUrl}/availability`,
-      {
-        availability: available
-      },
-      {
-        headers: new HttpHeaders({
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        })
-      }
-    );
-  }
+  return this.http.put(
+
+    `${environment.apiUrl}/api/mechanics/availability`,
+
+    {
+      availability
+    },
+
+    {
+      headers: this.getHeaders()
+    }
+  );
+}
 
  saveAuth(response: any) {
   if (!response?.token) return;

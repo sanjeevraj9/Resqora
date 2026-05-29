@@ -1,0 +1,71 @@
+<div class="complete-page">
+
+  <div class="complete-card">
+
+    <h1>
+      Complete Your Profile
+    </h1>
+
+    <p>
+      Please complete your details
+      to continue.
+    </p>
+
+    <!-- NAME -->
+
+    <input
+      type="text"
+      placeholder="Full Name"
+      [(ngModel)]="name"
+    />
+
+    <!-- PHONE -->
+
+    <input
+      type="tel"
+      placeholder="Phone Number"
+      [(ngModel)]="phone"
+    />
+
+    <!-- MECHANIC ONLY -->
+
+    <ng-container *ngIf="isMechanic">
+
+      <input
+        type="text"
+        placeholder="Shop Name"
+        [(ngModel)]="shopName"
+      />
+
+      <div class="file-upload">
+
+        <label>
+          Shop Photo
+        </label>
+
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onFileSelected($event)"
+        />
+
+      </div>
+
+    </ng-container>
+
+    <button
+      (click)="savePhone()"
+      [disabled]="loading"
+    >
+
+      {{
+        loading
+          ? 'Saving...'
+          : 'Continue'
+      }}
+
+    </button>
+
+  </div>
+
+</div>

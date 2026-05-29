@@ -185,9 +185,24 @@ export class AuthComponent implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        console.log(err);
         alert(err?.error?.message || 'Mechanic registration failed');
       }
     });
+    
   }
+  continueWithGoogle() {
+
+  const role =
+    this.role === 'mechanic'
+      ? 'MECHANIC'
+      : 'USER';
+
+  localStorage.setItem(
+    'oauthRole',
+    role
+  );
+
+  window.location.href =
+    'http://localhost:8082/oauth2/authorization/google';
+}
 }

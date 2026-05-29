@@ -56,8 +56,7 @@ toggleAvailability() {
       next: (res: any) => {
         this.profile = res;
       },
-      error: (err: any) => {
-        console.log(err);
+      error: () => {
         alert('Status update failed');
       }
     });

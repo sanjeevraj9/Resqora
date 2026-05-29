@@ -1,69 +1,108 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router
+} from '@angular/router';
+
 import { RequestService } from '../services/request.service';
+import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header.component';
 
 declare var Razorpay: any;
 
 @Component({
   selector: 'app-payment',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    UserShellHeaderComponent
+  ],
   templateUrl: './payment.component.html',
   styleUrls: ['./payment.component.scss']
 })
-export class PaymentComponent {
+export class PaymentComponent
+  implements OnInit {
 
   selectedMethod = 'COD';
   loading = false;
+  requestId!: number;
+  requestData: any = null;
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private requestService: RequestService
   ) {}
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      this.requestId =
+        Number(params['requestId']);
+
+      if (!this.requestId) {
+        alert('Invalid booking');
+        this.router.navigate(['/user-home']);
+        return;
+      }
+
+      this.loadRequest();
+    });
+  }
+
+  loadRequest() {
+    this.requestService
+      .getRequest(this.requestId)
+      .subscribe({
+        next: (res: any) => {
+          this.requestData = res;
+        },
+        error: () => {
+          alert('Booking not found');
+          this.router.navigate(['/user-home']);
+        }
+      });
+  }
 
   selectMethod(method: string) {
     this.selectedMethod = method;
   }
 
   continuePayment() {
-    const bookingData =
-      localStorage.getItem('pendingBooking');
-
-    if (!bookingData) {
-      alert('No booking found');
+    if (!this.requestData) {
       return;
     }
-
-    const booking =
-      JSON.parse(bookingData);
 
     if (this.selectedMethod === 'UPI') {
-      this.openRazorpay(booking);
+      this.openRazorpay();
       return;
     }
 
-    booking.paymentMethod = 'COD';
-    booking.paymentStatus = 'CASH_PENDING';
-
-    this.createRequest(booking);
+    this.updatePayment(
+      'COD',
+      'CASH_PENDING'
+    );
   }
 
-  openRazorpay(booking: any) {
+  openRazorpay() {
     const options = {
       key: 'rzp_test_SshViohzF567Ll',
+
       amount:
-        booking.estimatedPrice * 100,
+        this.requestData
+          .estimatedPrice * 100,
+
       currency: 'INR',
+
       name: 'ResQora',
+
       description:
         'Roadside Assistance Payment',
 
-      handler: (response: any) => {
-        booking.paymentMethod = 'UPI';
-        booking.paymentStatus = 'PAID';
-
-        this.createRequest(booking);
+      handler: () => {
+        this.updatePayment(
+          'UPI',
+          'PAID'
+        );
       },
 
       modal: {
@@ -83,30 +122,47 @@ export class PaymentComponent {
     razorpay.open();
   }
 
-  createRequest(data: any) {
+  updatePayment(
+    paymentMethod: string,
+    paymentStatus: string
+  ) {
     this.loading = true;
 
     this.requestService
-      .createRequest(data)
+      .updatePayment(
+        this.requestId,
+        paymentMethod,
+        paymentStatus
+      )
       .subscribe({
-        next: (res) => {
+        next: () => {
           localStorage.setItem(
             'activeRequest',
-            JSON.stringify(res)
+            JSON.stringify({
+              ...this.requestData,
+              id: this.requestId,
+              paymentMethod,
+              paymentStatus
+            })
           );
 
-          localStorage.removeItem(
-            'pendingBooking'
+          this.router.navigate(
+            ['/tracking'],
+            {
+              queryParams: {
+                requestId:
+                  this.requestId
+              }
+            }
           );
-
-          this.router.navigate([
-            '/tracking'
-          ]);
         },
+
         error: (err) => {
-          console.log(err);
           this.loading = false;
-          alert('Booking failed');
+          alert(
+            err?.error?.message ||
+            'Payment update failed'
+          );
         }
       });
   }

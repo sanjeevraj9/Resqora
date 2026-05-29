@@ -5,28 +5,27 @@
   <div class="issue-card">
 
     <!-- SERVICE SUMMARY -->
-    <div
-      class="selected-service-card"
-      *ngIf="selectedService">
+    <div class="selected-service-card">
 
       <div class="service-icon">
-        {{ selectedService.icon }}
+        🚗
       </div>
 
       <div class="service-info">
 
         <h2>
-          {{ selectedService.title }}
+          {{ selectedService || 'Emergency Service' }}
         </h2>
 
         <p>
-          {{ selectedService.desc }}
+          Vehicle Type:
+          {{ selectedVehicleType }}
         </p>
 
       </div>
 
       <div class="service-price">
-        {{ selectedService.price }}
+        ₹{{ estimatedPrice }}
       </div>
 
     </div>
@@ -36,14 +35,7 @@
 
     <div class="issue-grid">
 
-      <button
-        *ngFor="let issue of issueOptions"
-        [class.active]="selectedIssue === issue"
-        (click)="chooseIssue(issue)">
-
-        {{ issue }}
-
-      </button>
+     
 
     </div>
 
@@ -60,10 +52,9 @@
 
         <option
           *ngFor="let brand of brands"
-          [value]="brand">
-
+          [value]="brand"
+        >
           {{ brand }}
-
         </option>
 
       </select>
@@ -83,10 +74,9 @@
 
         <option
           *ngFor="let model of models"
-          [value]="model">
-
+          [value]="model"
+        >
           {{ model }}
-
         </option>
 
       </select>
@@ -100,7 +90,8 @@
 
       <textarea
         [(ngModel)]="problemDescription"
-        placeholder="Explain your problem clearly...">
+        placeholder="Explain your problem clearly..."
+      >
       </textarea>
 
     </div>
@@ -108,27 +99,24 @@
     <!-- LOCATION -->
     <button
       class="location-btn"
-      (click)="getCurrentLocation()">
-
+      (click)="getCurrentLocation()"
+    >
       📍 Refresh Current Location
-
     </button>
 
     <p
       *ngIf="locationFetched"
-      class="success-text">
-
+      class="success-text"
+    >
       ✅ Location fetched successfully
-
     </p>
 
     <!-- BOOK -->
     <button
       class="continue-btn"
-      (click)="continueBooking()">
-
-      Book Request →
-
+      (click)="continueBooking()"
+    >
+      Continue to Payment →
     </button>
 
   </div>

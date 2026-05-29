@@ -1,7 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import {
+  ActivatedRoute,
+  Router
+} from '@angular/router';
 
 import { RequestService } from '../services/request.service';
 import { VehicleService } from '../services/vehicle.service';
@@ -18,13 +21,16 @@ import { UserShellHeaderComponent } from '../user-shell-header/user-shell-header
   templateUrl: './issue-details.component.html',
   styleUrls: ['./issue-details.component.scss']
 })
-export class IssueDetailsComponent implements OnInit {
+export class IssueDetailsComponent
+  implements OnInit {
 
-  selectedService: any = null;
+  selectedService = '';
+  estimatedPrice = 0;
+
   selectedIssue = '';
   problemDescription = '';
 
-  selectedVehicleType = '';
+  selectedVehicleType = 'Bike';
   selectedBrand = '';
   selectedModel = '';
 
@@ -60,33 +66,51 @@ export class IssueDetailsComponent implements OnInit {
   constructor(
     private vehicleService: VehicleService,
     private requestService: RequestService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    const serviceData =
-      localStorage.getItem('selectedService');
+    this.route.queryParams.subscribe(params => {
+      const vehicle =
+        params['vehicle'] || 'Bike';
 
-    if (serviceData) {
       this.selectedService =
-        JSON.parse(serviceData);
-    }
+        params['service'] ||
+        'Emergency Service';
 
-    this.selectedVehicleType =
-      localStorage.getItem('selectedVehicleType') || 'Bike';
+      this.estimatedPrice =
+        Number(params['price']) || 199;
+
+      if (
+        vehicle === 'Bike' ||
+        vehicle === 'EV Bike'
+      ) {
+        this.selectedVehicleType = 'Bike';
+      } else {
+        this.selectedVehicleType = 'Car';
+      }
+
+      this.selectedBrand = '';
+      this.selectedModel = '';
+    });
 
     this.getCurrentLocation();
   }
 
   get brands(): string[] {
     return Object.keys(
-      this.vehicleData[this.selectedVehicleType] || {}
+      this.vehicleData[
+        this.selectedVehicleType
+      ] || {}
     );
   }
 
   get models(): string[] {
     return (
-      this.vehicleData[this.selectedVehicleType]?.[
+      this.vehicleData[
+        this.selectedVehicleType
+      ]?.[
         this.selectedBrand
       ] || []
     );
@@ -103,91 +127,115 @@ export class IssueDetailsComponent implements OnInit {
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        this.latitude = position.coords.latitude;
-        this.longitude = position.coords.longitude;
+        this.latitude =
+          position.coords.latitude;
+
+        this.longitude =
+          position.coords.longitude;
+
         this.locationFetched = true;
       }
     );
   }
 
   mapIssueType(): string {
-    if (!this.selectedService) return 'OTHER';
-
     const title =
-      this.selectedService.title?.toLowerCase() || '';
+      this.selectedService.toLowerCase();
 
-    if (title.includes('puncture')) return 'PUNCTURE';
-    if (title.includes('fuel')) return 'FUEL_EMPTY';
-    if (title.includes('battery')) return 'BATTERY_ISSUE';
-    if (title.includes('towing')) return 'TOWING';
-    if (title.includes('engine')) return 'ENGINE_PROBLEM';
+    if (title.includes('puncture'))
+      return 'PUNCTURE';
+
+    if (title.includes('fuel'))
+      return 'FUEL_EMPTY';
+
+    if (title.includes('battery'))
+      return 'BATTERY_ISSUE';
+
+    if (title.includes('towing'))
+      return 'TOWING';
+
+    if (title.includes('engine'))
+      return 'ENGINE_PROBLEM';
+    if (title.includes('washing'))
+      return 'CAR_WASHING';
 
     return 'OTHER';
   }
-continueBooking() {
 
-  if (!this.selectedBrand) {
-    alert('Please select brand');
-    return;
+  continueBooking() {
+    if (!this.selectedBrand) {
+      alert('Please select brand');
+      return;
+    }
+
+    if (!this.selectedModel) {
+      alert('Please select model');
+      return;
+    }
+
+    if (!this.locationFetched) {
+      alert('Location fetching...');
+      return;
+    }
+
+    const vehiclePayload = {
+      vehicleType:
+        this.selectedVehicleType === 'Bike'
+          ? 'BIKE'
+          : 'CAR',
+
+      brand: this.selectedBrand,
+      model: this.selectedModel,
+      registrationNumber:
+        'TEMP-' + Date.now(),
+      fuelType: 'PETROL'
+    };
+
+    this.vehicleService
+      .createVehicle(vehiclePayload)
+      .subscribe({
+        next: (savedVehicle) => {
+          const requestPayload = {
+            vehicleId: savedVehicle.id,
+            issueType: this.mapIssueType(),
+            description:
+              this.problemDescription ||
+              this.selectedIssue,
+
+            latitude: this.latitude,
+            longitude: this.longitude,
+
+            estimatedPrice:
+              this.estimatedPrice
+          };
+
+          this.requestService
+            .createRequest(requestPayload)
+            .subscribe({
+              next: (request: any) => {
+                this.router.navigate(
+                  ['/payment'],
+                  {
+                    queryParams: {
+                      requestId: request.id
+                    }
+                  }
+                );
+              },
+
+              error: () => {
+                alert(
+                  'Booking request failed'
+                );
+              }
+            });
+        },
+
+        error: () => {
+          alert(
+            'Vehicle creation failed'
+          );
+        }
+      });
   }
-
-  if (!this.selectedModel) {
-    alert('Please select model');
-    return;
-  }
-
-  if (!this.locationFetched) {
-    alert('Location fetching...');
-    return;
-  }
-
-  const vehiclePayload = {
-    vehicleType:
-      this.selectedVehicleType === 'Bike'
-        ? 'BIKE'
-        : 'CAR',
-
-    brand: this.selectedBrand,
-    model: this.selectedModel,
-    registrationNumber:
-      'TEMP-' + Date.now(),
-    fuelType: 'PETROL'
-  };
-
-  this.vehicleService
-    .createVehicle(vehiclePayload)
-    .subscribe({
-
-      next: (savedVehicle) => {
-
-        const requestPayload = {
-          vehicleId: savedVehicle.id,
-          issueType: this.mapIssueType(),
-          description:
-            this.problemDescription ||
-            this.selectedIssue,
-
-          latitude: this.latitude,
-          longitude: this.longitude,
-
-          estimatedPrice: Number(
-            this.selectedService.price.replace('₹', '')
-          )
-        };
-
-        localStorage.setItem(
-          'pendingBooking',
-          JSON.stringify(requestPayload)
-        );
-
-        this.router.navigate([
-          '/payment'
-        ]);
-      },
-
-      error: () => {
-        alert('Vehicle creation failed');
-      }
-    });
-}
 }

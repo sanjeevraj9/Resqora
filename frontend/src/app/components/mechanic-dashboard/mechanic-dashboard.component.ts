@@ -31,7 +31,7 @@ export class MechanicDashboardComponent
   activeRequest: any = null;
   jobHistory: any[] = [];
   showChat=false;
-
+    available=false;
   todayEarnings = 0;
   completedJobs = 0;
 
@@ -128,6 +128,7 @@ export class MechanicDashboardComponent
       '_blank'
     );
   }
+  
 
  acceptRequest() {
   if (!this.incomingRequest) return;
@@ -136,9 +137,6 @@ export class MechanicDashboardComponent
     .acceptRequest(this.incomingRequest.requestId)
     .subscribe({
       next: (res: any) => {
-
-        console.log('ACCEPT RESPONSE', res);
-        console.log('INCOMING', this.incomingRequest);
 
         this.activeRequest = {
           ...res,
@@ -160,19 +158,12 @@ export class MechanicDashboardComponent
             this.incomingRequest.longitude
         };
 
-        console.log(
-          'ACTIVE REQUEST FINAL',
-          this.activeRequest
-        );
-
         this.incomingRequest = null;
 
         this.startLiveLocationSharing();
       },
 
-      error: (err) => {
-        console.log(err);
-      }
+      error: () => {}
     });
 }
 
@@ -289,6 +280,8 @@ get bookingId(): number {
     return new Date(date)
       .toLocaleString();
   }
+
+  
 
   ngOnDestroy(): void {
     clearInterval(
