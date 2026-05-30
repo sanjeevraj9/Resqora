@@ -132,54 +132,99 @@
 
     <h2>Mechanic Account</h2>
 
+   <div
+  class="profile-info"
+  *ngIf="profile">
+
+  <!-- SHOP COVER -->
+
+  <div class="shop-cover">
+
+    <img
+      *ngIf="profile.shopImageUrl"
+      [src]="profile.shopImageUrl"
+      alt="Shop Image"
+    />
+
     <div
-      class="profile-info"
-      *ngIf="profile">
+      *ngIf="!profile.shopImageUrl"
+      class="shop-placeholder">
 
-      <div class="profile-avatar">
-        🔧
-      </div>
-
-      <div class="profile-detail">
-
-        <p>
-          <strong>Name:</strong>
-          {{ profile.name }}
-        </p>
-
-        <p>
-          <strong>Email:</strong>
-          {{ profile.email }}
-        </p>
-
-        <p>
-          <strong>Phone:</strong>
-          {{ profile.phone }}
-        </p>
-
-        <p>
-          <strong>Garage:</strong>
-          {{ profile.garageName || 'Not Added' }}
-        </p>
-
-        <p>
-          <strong>Experience:</strong>
-          {{ profile.experience || 0 }} years
-        </p>
-
-        <p>
-          <strong>Specialization:</strong>
-          {{ profile.specialization || 'General Repair' }}
-        </p>
-
-        <p>
-          <strong>Rating:</strong>
-          ⭐ {{ profile.rating || 0 }}
-        </p>
-
-      </div>
+      🏪 No Shop Image
 
     </div>
+
+  </div>
+
+  <!-- PROFILE IMAGE -->
+
+  <div class="profile-image-wrapper">
+
+    <img
+      *ngIf="profile.profileImageUrl"
+      [src]="profile.profileImageUrl"
+      class="profile-photo"
+      alt="Profile"
+    />
+
+    <div
+      *ngIf="!profile.profileImageUrl"
+      class="profile-avatar">
+
+      🔧
+
+    </div>
+
+  </div>
+
+  <div class="profile-detail">
+
+    <h3>
+      {{ profile.name }}
+    </h3>
+
+    <p>
+      <strong>Email:</strong>
+      {{ profile.email }}
+    </p>
+
+    <p>
+      <strong>Phone:</strong>
+      {{ profile.phone }}
+    </p>
+
+    <p>
+      <strong>Garage:</strong>
+      {{ profile.shopName || 'Not Added' }}
+    </p>
+
+    <p>
+      <strong>Experience:</strong>
+      {{ profile.experienceYears || 0 }} Years
+    </p>
+
+    <p>
+      <strong>Specialization:</strong>
+      {{ profile.specialization || 'General Repair' }}
+    </p>
+
+    <p>
+      <strong>Rating:</strong>
+      ⭐ {{ profile.rating || 5 }}
+    </p>
+
+    <button
+  class="edit-profile-btn"
+  (click)="editProfile()">
+
+  ✏️ Edit Profile
+
+</button>
+
+  </div>
+
+</div>
+
 
     <div class="profile-actions">
 
@@ -212,3 +257,4 @@
   </div>
 
 </div>
+

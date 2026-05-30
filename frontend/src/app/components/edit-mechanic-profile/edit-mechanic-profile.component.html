@@ -1,0 +1,99 @@
+<app-mechanic-shell-header></app-mechanic-shell-header>
+
+
+<div class="edit-page">
+
+  <div class="edit-card">
+    
+<h1>Edit Profile</h1>
+
+<p>
+  Update your mechanic profile details.
+</p>
+
+<!-- PROFILE PHOTO -->
+
+<div class="image-section">
+
+  <img
+    *ngIf="profilePreview"
+    [src]="profilePreview"
+    class="profile-preview"
+  />
+<label>Profile Photo</label>
+  <input
+    type="file"
+    accept="image/*"
+    (change)="onProfileSelected($event)"
+  />
+
+</div>
+
+<!-- SHOP PHOTO -->
+
+<div class="image-section">
+<label>Shop Photo</label>
+  <img
+    *ngIf="shopPreview"
+    [src]="shopPreview"
+    class="shop-preview"
+  />
+
+  <input
+    type="file"
+    accept="image/*"
+    (change)="onShopSelected($event)"
+  />
+
+</div>
+<label>Name</label>
+<input
+  type="text"
+  placeholder="Full Name"
+  [(ngModel)]="name"
+/>
+
+<label>Phone Number</label>
+<input
+  type="text"
+  placeholder="Phone Number"
+  [(ngModel)]="phone"
+/>
+
+<label>Shop Name</label>
+<input
+  type="text"
+  placeholder="Shop Name"
+  [(ngModel)]="shopName"
+/>
+
+<label>Specialization</label>
+<input
+  type="text"
+  placeholder="Specialization"
+  [(ngModel)]="specialization"
+/>
+
+<label>Experience Years</label>
+<input
+  type="number"
+  placeholder="Experience Years"
+  [(ngModel)]="experienceYears"
+/>
+
+<button
+  (click)="saveProfile()"
+  [disabled]="loading"
+>
+
+  {{
+    loading
+      ? 'Saving...'
+      : 'Save Changes'
+  }}
+
+</button>
+
+  </div>
+
+</div>

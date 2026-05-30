@@ -1,0 +1,180 @@
+.edit-page {
+  min-height: 100vh;
+  padding: 40px 20px;
+
+  background: linear-gradient(135deg, #fff5f5, #f8fafc);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.edit-card {
+  width: 100%;
+  max-width: 750px;
+
+  background: white;
+
+  border-radius: 28px;
+
+  padding: 40px;
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+
+  border: 1px solid #f1f5f9;
+}
+
+.edit-card h1 {
+  margin: 0;
+
+  font-size: 34px;
+
+  font-weight: 800;
+
+  color: #0f172a;
+}
+
+.edit-card p {
+  margin-top: 8px;
+  margin-bottom: 30px;
+
+  color: #64748b;
+
+  font-size: 15px;
+}
+
+.image-section {
+  margin-bottom: 28px;
+}
+
+.image-section label {
+  display: block;
+
+  margin-bottom: 10px;
+
+  font-weight: 700;
+
+  color: #334155;
+}
+
+.profile-preview {
+  width: 140px;
+  height: 140px;
+
+  border-radius: 50%;
+
+  object-fit: cover;
+
+  border: 5px solid white;
+
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+
+  margin-bottom: 12px;
+}
+
+.shop-preview {
+  width: 100%;
+
+  height: 220px;
+
+  object-fit: cover;
+
+  border-radius: 18px;
+
+  border: 2px solid #f1f5f9;
+
+  margin-bottom: 12px;
+}
+
+.edit-card input {
+  width: 100%;
+
+  height: 58px;
+
+  border: 1px solid #e2e8f0;
+
+  border-radius: 14px;
+
+  padding: 0 18px;
+
+  font-size: 15px;
+
+  margin-bottom: 16px;
+
+  transition: 0.25s;
+}
+
+.edit-card input:focus {
+  outline: none;
+
+  border-color: #ef4444;
+
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+input[type="file"] {
+  height: auto !important;
+
+  padding: 12px !important;
+
+  background: #f8fafc;
+
+  cursor: pointer;
+}
+
+button {
+  width: 100%;
+
+  height: 60px;
+
+  border: none;
+
+  border-radius: 16px;
+
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+
+  margin-top: 10px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 12px 25px rgba(239, 68, 68, 0.25);
+}
+
+button:disabled {
+  opacity: 0.7;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+@media (max-width: 768px) {
+  .edit-card {
+    padding: 25px;
+  }
+
+  .edit-card h1 {
+    font-size: 28px;
+  }
+
+  .shop-preview {
+    height: 180px;
+  }
+
+  .profile-preview {
+    width: 120px;
+    height: 120px;
+  }
+}

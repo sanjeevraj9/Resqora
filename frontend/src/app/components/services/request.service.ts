@@ -6,6 +6,7 @@ import {
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -232,4 +233,61 @@ submitReview(data: any) {
       }
     );
   }
+  updateMechanicProfile(data: any) {
+
+  return this.http.put(
+
+    `${this.mechanicUrl}/profile`,
+
+    data,
+
+    {
+      headers: this.getHeaders()
+    }
+  );
+}
+
+uploadProfilePhoto(file: File) {
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    'file',
+    file
+  );
+
+  return this.http.post(
+
+    `${this.mechanicUrl}/upload-profile-photo`,
+
+    formData,
+
+    {
+      headers: this.getHeaders()
+    }
+  );
+}
+
+uploadShopPhoto(file: File) {
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    'file',
+    file
+  );
+
+  return this.http.post(
+
+    `${this.mechanicUrl}/upload-shop-photo`,
+
+    formData,
+
+    {
+      headers: this.getHeaders()
+    }
+  );
+}
 }

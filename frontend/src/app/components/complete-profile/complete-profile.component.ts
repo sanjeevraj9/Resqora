@@ -41,7 +41,13 @@ phone = '';
 
 shopName = '';
 
+profilePhoto: File | null = null;
+
 shopPhoto: File | null = null;
+
+profilePreview: string | null = null;
+
+shopPreview: string | null = null;
 
 latitude: number | null = null;
 
@@ -111,6 +117,39 @@ getCurrentLocation() {
 
   );
 }
+onProfilePhotoSelected(event: any) {
+
+  if (
+    event.target.files &&
+    event.target.files.length > 0
+  ) {
+
+    this.profilePhoto =
+      event.target.files[0];
+
+    this.profilePreview =
+      URL.createObjectURL(
+        this.profilePhoto!
+      );
+  }
+}
+
+onShopPhotoSelected(event: any) {
+
+  if (
+    event.target.files &&
+    event.target.files.length > 0
+  ) {
+
+    this.shopPhoto =
+      event.target.files[0];
+
+    this.shopPreview =
+      URL.createObjectURL(
+        this.shopPhoto!
+      );
+  }
+}
 
   savePhone() {
 
@@ -173,6 +212,13 @@ getCurrentLocation() {
     'token',
     res.token
   );
+  this.uploadProfilePhoto(
+  res.token
+);
+
+this.uploadShopPhoto(
+  res.token
+);
 
   localStorage.setItem(
     'role',
@@ -210,5 +256,66 @@ getCurrentLocation() {
       }
     });
   }
+  uploadProfilePhoto(token: string) {
+
+  if (!this.profilePhoto) {
+    return;
+  }
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    'file',
+    this.profilePhoto
+  );
+
+  this.http.post(
+
+    `${environment.apiUrl}/api/mechanics/upload-profile-photo`,
+
+    formData,
+
+    {
+      headers: {
+        Authorization:
+          `Bearer ${token}`
+      }
+    }
+
+  ).subscribe();
+}
+uploadShopPhoto(token: string) {
+
+  if (
+    !this.shopPhoto ||
+    !this.isMechanic
+  ) {
+    return;
+  }
+
+  const formData =
+    new FormData();
+
+  formData.append(
+    'file',
+    this.shopPhoto
+  );
+
+  this.http.post(
+
+    `${environment.apiUrl}/api/mechanics/upload-shop-photo`,
+
+    formData,
+
+    {
+      headers: {
+        Authorization:
+          `Bearer ${token}`
+      }
+    }
+
+  ).subscribe();
+}
  
 }

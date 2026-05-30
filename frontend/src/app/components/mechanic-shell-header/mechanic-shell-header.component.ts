@@ -66,6 +66,14 @@ export class MechanicShellHeaderComponent
       error: () => {}
     });
   }
+  editProfile() {
+
+  this.closeProfile();
+
+  this.router.navigate([
+    '/edit-mechanic-profile'
+  ]);
+}
 
   detectCurrentLocation() {
     if (!navigator.geolocation) {

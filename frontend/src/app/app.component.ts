@@ -57,7 +57,10 @@ export class AppComponent {
           '/mechanic-profile',
           '/mechanic-history',
           '/live-support',
-          '/services'
+          '/services',
+          '/email-verified',
+          '/oauth-success',
+          '/edit-mechanic-profile'
         ];
 
         this.hideNavbar =

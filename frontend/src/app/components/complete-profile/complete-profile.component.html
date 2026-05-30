@@ -18,6 +18,19 @@
       placeholder="Full Name"
       [(ngModel)]="name"
     />
+    <h3>Profile Photo</h3>
+
+<input
+  type="file"
+  accept="image/*"
+  (change)="onProfilePhotoSelected($event)"
+/>
+
+<img
+  *ngIf="profilePreview"
+  [src]="profilePreview"
+  width="120"
+/>
 
     <!-- PHONE -->
 
@@ -37,19 +50,23 @@
         [(ngModel)]="shopName"
       />
 
-      <div class="file-upload">
+      <div *ngIf="isMechanic">
 
-        <label>
-          Shop Photo
-        </label>
+  <h3>Shop Photo</h3>
 
-        <input
-          type="file"
-          accept="image/*"
-          (change)="onFileSelected($event)"
-        />
+  <input
+    type="file"
+    accept="image/*"
+    (change)="onShopPhotoSelected($event)"
+  />
 
-      </div>
+  <img
+    *ngIf="shopPreview"
+    [src]="shopPreview"
+    width="120"
+  />
+
+</div>
 
     </ng-container>
 

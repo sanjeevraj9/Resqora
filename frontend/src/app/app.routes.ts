@@ -59,6 +59,14 @@ export const routes: Routes = [
   path: 'complete-profile',
   component: CompleteProfileComponent
 },
+{
+  path: 'edit-mechanic-profile',
+  loadComponent: () =>
+    import('./components/edit-mechanic-profile/edit-mechanic-profile.component')
+  .then(m => m.EditMechanicProfileComponent)
+
+},
+
   { path: '**', redirectTo: '' }
 
   
