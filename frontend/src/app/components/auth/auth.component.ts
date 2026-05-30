@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { environment } from 'src/environments/environment';
 
 type Role = 'user' | 'mechanic';
 type Mode = 'login' | 'register';
@@ -203,6 +204,7 @@ export class AuthComponent implements OnInit {
   );
 
   window.location.href =
-    'http://localhost:8082/oauth2/authorization/google';
+  `${environment.apiUrl}/api/auth/google?role=${role}`;
+
 }
 }
