@@ -23,60 +23,97 @@ export class ChatService {
 
   connect(userId: number) {
 
-    if (this.client && this.connected) {
-      return;
-    }
+  const token = localStorage.getItem('token');
 
-    this.client = new Client({
-      webSocketFactory: () =>
-        new SockJS(environment.wsUrl),
-
-      reconnectDelay: 5000,
-
-      onConnect: () => {
-        
-
-        this.connected = true;
-
-        if (!this.subscribed) {
-          this.client?.subscribe(
-            `/topic/chat/${userId}`,
-            (msg: IMessage) => {
-              const received =
-                JSON.parse(msg.body);
-
-              const current =
-                this.messages$.getValue();
-
-              this.messages$.next([
-                ...current,
-                received
-              ]);
-            }
-          );
-
-          this.subscribed = true;
-        }
-      },
-
-      onDisconnect: () => {
-        
-        this.connected = false;
-        this.subscribed = false;
-      },
-
-      onStompError: (err) => {
-        console.error(err);
-      },
-
-      onWebSocketError: (err) => {
-        console.error(err);
-      }
-    });
-
-    this.client.activate();
+  if (this.client && this.connected) {
+    return;
   }
 
+  this.client = new Client({
+
+    webSocketFactory: () =>
+      new SockJS(environment.wsUrl),
+
+    connectHeaders: {
+      Authorization: `Bearer ${token}`
+    },
+
+    reconnectDelay: 5000,
+
+    debug: (str) => {
+      console.log('STOMP:', str);
+    },
+
+    onConnect: () => {
+
+      console.log(
+        '✅ WEBSOCKET CONNECTED'
+      );
+
+      this.connected = true;
+
+      if (!this.subscribed) {
+
+        console.log(
+          '📡 Subscribed to:',
+          `/topic/chat/${userId}`
+        );
+
+        this.client?.subscribe(
+          `/topic/chat/${userId}`,
+          (msg: IMessage) => {
+
+            console.log(
+              '📩 MESSAGE RECEIVED:',
+              msg.body
+            );
+
+            const received =
+              JSON.parse(msg.body);
+
+            const current =
+              this.messages$.getValue();
+
+            this.messages$.next([
+              ...current,
+              received
+            ]);
+          }
+        );
+
+        this.subscribed = true;
+      }
+    },
+
+    onDisconnect: () => {
+
+      console.log(
+        '❌ DISCONNECTED'
+      );
+
+      this.connected = false;
+      this.subscribed = false;
+    },
+
+    onStompError: (err) => {
+
+      console.error(
+        '🚨 STOMP ERROR',
+        err
+      );
+    },
+
+    onWebSocketError: (err) => {
+
+      console.error(
+        '🚨 WS ERROR',
+        err
+      );
+    }
+  });
+
+  this.client.activate();
+}
   sendMessage(
     senderId: number,
     receiverId: number,
