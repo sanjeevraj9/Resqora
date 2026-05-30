@@ -204,7 +204,7 @@ export class AuthComponent implements OnInit {
   );
 
   window.location.href =
-  `${environment.apiUrl}/api/auth/oauth2/authorization/google?role=${role}`;
+`${environment.apiUrl}/oauth2/authorization/google?role=${role}`;
 
 }
 }
